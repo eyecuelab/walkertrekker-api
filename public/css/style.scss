@@ -1,0 +1,330 @@
+$primary: #e46560;
+$offwhite: #efefef;
+
+body {
+  color: #333;
+  font-family: 'Roboto';
+  font-weight: 300;
+  font-size: 10pt;
+  line-height: 17pt;
+  margin: 0;
+  position: relative;
+  padding: 50px 0 0 0;
+  height: 2000px;
+}
+
+h1 {
+  line-height: 28pt;
+  font-weight: 100;
+  font-size: 22pt;
+}
+
+header {
+  position: fixed;
+  top: 0;
+  background: $primary;
+  height: 50px;
+  width: 100%;
+  z-index: 99;
+  img {
+    width: 75px;
+  }
+  &.reverse {
+    top: -50px;
+    transition: .3s;
+  }
+}
+
+section {
+  padding: 0 30px;
+}
+
+section {
+  height: 600px;
+
+  > div {
+    margin: 20% 0 0 0;
+  }
+
+  &.abc {
+    background: $offwhite;
+    overflow: hidden;
+    .layout-row {
+      margin: 0 0 30px 0;
+    }
+    .text {
+      opacity: 0;
+      &.show {
+        opacity: 1;
+        animation: slideUp .7s ease;
+      }
+    }
+  }
+
+  &.intro {
+    background: url('../images/intro-m.jpg') center center / cover;
+  }
+
+  &.tools {
+    background: url('../images/tools-m.jpg') center center / cover;
+    overflow: hidden;
+  }
+
+  &.history {
+    background: url('../images/history-m.jpg') center center / cover
+  }
+}
+
+.beta {
+  background: url('../images/footer-m.jpg') center center / cover;
+  height: 400px;
+  text-align: center;
+  * {
+    max-width: 600px;
+  }
+}
+
+footer {
+  height: 120px;
+  background: #333;
+  padding: 20px 30px;
+
+  a {
+    color: #fff;
+  }
+}
+
+.text {
+  max-width: 830px;
+}
+
+.store-link {
+  margin: 15px 0;
+}
+
+.bubble {
+  height: 30px;
+  width: 80px;
+  text-align: center;
+  color: white;
+  line-height: 30px;
+  background: $primary;
+  position: absolute;
+  z-index: 1;
+  display: none;
+
+  div {
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 45px 0px 0 50px;
+    border-color: $primary transparent transparent transparent;
+    position: absolute;
+    bottom: -19px;
+    right: -4px;
+    transform: rotate(-8deg);
+    z-index: -1;
+  }
+
+  &.show {
+    animation: popIn .5s;
+    display: block;
+  }
+}
+
+.combo-wrap {
+  position: relative;
+  right: 150px;
+  opacity: 0;
+  transition: opacity .5s;
+  display: none;
+
+  .combo {
+    width: 150px;
+    height: 10000px;
+    position: absolute;
+  }
+  #combo-1 {
+    background: url('../images/combo-1.jpg') center center / contain;
+    top: -615px;
+
+  }
+  #combo-2 {
+    background: url('../images/combo-2.jpg') center center / contain;
+    left: 155px;
+    top: -7400px;
+  }
+  #combo-3 {
+    background: url('../images/combo-3.jpg') center center / contain;
+    left: 310px;
+    top: -615px;
+  }
+
+  &.show {
+    opacity: 1;
+    #combo-1 { animation: spinDown 2.5s }
+    #combo-2 { animation: spinUp 2.5s }
+    #combo-3 { animation: spinDown 2.5s }
+  }
+}
+
+.combo-text {
+  position: relative;
+  z-index: 1;
+}
+
+.phone-wrap {
+  position: relative;
+  .phone {
+    height: 820px;
+    background: url(../images/phone.png) center center / cover;
+    position: absolute;
+    bottom: 85px;
+    left: 50px;
+    width: 420px;
+    #bubble-1 {
+      bottom: 420px;
+      left: 0;
+    }
+    #bubble-2 {
+      bottom: 290px;
+      left: 30px;
+    }
+    #bubble-3 {
+      bottom: 190px;
+      left: 170px;
+    }
+  }
+}
+
+.bullet {
+  background: $primary;
+  border-radius: 50%;
+  color: #fff;
+  display: inline-block;
+  font-weight: 600;
+  height: 27px;
+  line-height: 27px;
+  margin: 0 18px 0 0;
+  min-width: 27px;
+  text-align: center;
+}
+
+.quote {
+  line-height: 15pt;
+  margin: 30px 0 0 0;
+  text-align: center;
+
+  i {
+    font-family: serif;
+    font-weight: 600;
+    display: block;
+    opacity: 0;
+  }
+
+  img {
+    width: 75px;
+    backface-visibility: hidden;
+    opacity: 0;
+  }
+
+  .author {
+    margin: 10px 0 0 0;
+  }
+
+  &.show {
+    i {
+      animation: slideRightBig .9s .2s forwards;
+    }
+
+    img {
+      animation: slideRight .75s forwards;
+    }
+  }
+}
+
+.inverted {
+  color: white;
+}
+
+// MIN-WIDTH 600PX
+@media (min-width: 600px) {
+
+body {
+  font-size: 11pt;
+  line-height: 18pt;
+  padding: 0;
+  &.fixed {
+    header {
+      display: flex !important;
+      position: fixed;
+      animation: slideDown .3s;
+    }
+  }
+}
+
+h1 {
+  line-height: 34pt;
+  font-size: 28pt;
+}
+
+header {
+  position: initial;
+}
+
+section {
+  position: relative;
+  height: 700px;
+  > div {
+    margin: 10% 0 0 0;
+  }
+
+  &.intro {
+    h1 {
+      margin: 10px 0 20px 0;
+    }
+
+    background: url('../images/intro.jpg') center center / cover
+  }
+
+  &.tools {
+    background: white;
+    .combo-wrap {
+      display: block;
+    }
+  }
+
+  &.history {
+    h1 {
+      margin: 20px 0 10px 0;
+    }
+    background: url('../images/history.jpg') center center / cover;
+  }
+}
+
+.combo {
+  opacity: 0.7;
+}
+
+.quote {
+  font-size: 12pt;
+  max-width: 880px;
+}
+
+}
+
+@media (min-width: 860px) {
+  .phone-wrap .phone #bubble-3 {
+    left: 310px;
+    div {
+      border-width: 30px 0px 35px 30px;
+      bottom: -35px;
+      right: 81px;
+      transform: rotate(52deg);
+    }
+  }
+  .combo {
+    opacity: 1;
+  }
+
+}

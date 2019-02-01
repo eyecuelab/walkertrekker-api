@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+  <script>
+  var socket = io.connect();
+  var game = "4a27f520-f545-11e6-925b-87f18b8adc75";
+  socket.on('connect', function() {
+    socket.emit('game', game);
+  });
+  socket.on('gameEvent', function(data) {
+    console.log('------- gameEvent', data);
+  });
+</script>
+</body>
+</html>

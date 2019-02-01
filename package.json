@@ -1,0 +1,57 @@
+{
+  "name": "walkertrekker",
+  "engines": {
+    "node": "10.11.0",
+    "npm": "6.4.1"
+  },
+  "description": "",
+  "version": "0.0.1",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "migrate": "./node_modules/.bin/pg-migrate up",
+    "migrate_down": "./node_modules/.bin/pg-migrate down",
+    "standard": "./node_modules/.bin/standard",
+    "apidoc": "./node_modules/apidoc/bin/apidoc -i app/routes -o public/doc/"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "^0.0.3",
+    "body-parser": "^1.15.2",
+    "co": "^4.6.0",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.1",
+    "morgan": "^1.7.0",
+    "node-pg-migrate": "^1.0.0",
+    "node-uuid": "^1.4.7",
+    "passport": "^0.3.2",
+    "passport-facebook": "^2.1.1",
+    "passport-json": "^1.2.0",
+    "passport-local": "^1.0.0",
+    "pg": "^6.1.2",
+    "pg-hstore": "^2.3.2",
+    "pg-native": "^1.10.0",
+    "sequelize": "^3.30.2",
+    "socket.io": "^1.7.3",
+    "twilio": "^2.11.0"
+  },
+  "devDependencies": {
+    "apidoc": "^0.16.1",
+    "socket.io-client": "^1.7.3",
+    "standard": "^8.5.0"
+  },
+  "standard": {
+    "ignore": [
+      "public",
+      "views",
+      "tmp",
+      "doc"
+    ]
+  }
+}
