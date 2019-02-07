@@ -15,7 +15,7 @@ function normalizePhoneNumber (req, res, done) {
 
 function loginRequired (req, res, done) {
   User.findOne({ where: { authToken: req.headers['auth_token'] } }).then(function (user) {
-    if (!user) return res.status(401).json({ error: 'Unauthorized' })
+    if (!user) return res.status(401).json({ error: 'Get lost!!' })
 
     req.user = user
     done()

@@ -58,7 +58,6 @@ app.use(flash())
 require('./app/routes')(app, passport)
 app.set('port', port);
 
-
 /**
  * Create HTTP server.
  */
