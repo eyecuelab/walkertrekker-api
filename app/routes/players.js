@@ -15,7 +15,7 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" http://localhost:5000/api/players/allPlayers
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" http://localhost:5000/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name

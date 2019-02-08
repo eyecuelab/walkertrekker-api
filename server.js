@@ -2,7 +2,7 @@ require('dotenv').config()
 
 var express = require('express')
 var path = require('path')
-var passport = require('passport')
+// var passport = require('passport')
 var flash = require('connect-flash')
 
 // var morgan = require('morgan')
@@ -17,7 +17,7 @@ var port = process.env.PORT || 5000
 var server = http.Server(app)
 var io = require('socket.io')(server)
 
-require('./config/passport')(passport)
+// require('./config/passport')(passport)
 
 io.on('connection', function(socket) {
   // once a client has connected,
@@ -51,11 +51,11 @@ app.get('/', function (req, res) {
   }
 })
 
-app.use(passport.initialize())
-app.use(passport.session())
+// app.use(passport.initialize())
+// app.use(passport.session())
 app.use(flash())
 
-require('./app/routes')(app, passport)
+require('./app/routes')(app)
 app.set('port', port);
 
 /**
