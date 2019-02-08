@@ -21,14 +21,9 @@ function PlayerModel (sequelize, DataTypes) {
     health: DataTypes.INTEGER,
     hunger: DataTypes.INTEGER,
     steps: DataTypes.ARRAY(DataTypes.INTEGER),
-  }, {
-    classMethods: {},
-    instanceMethods: {
-      toJson,
-    }
   })
 
-  function * toJson(opts = {}) {
+  Player.prototype.toJson = function * (opts = {}) {
     let json = {
       id: this.id,
       displayName: this.displayName,
@@ -39,7 +34,6 @@ function PlayerModel (sequelize, DataTypes) {
       hunger: this.hunger,
       steps: this.steps,
     }
-
     return json
   }
 

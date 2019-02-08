@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
+const op = sequelize.Op
 
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
@@ -13,8 +14,26 @@ function fetchAllPlayers (req, res, done) {
   })
 }
 
+function fetchPlayer (req, res, done) {
+  // console.log(op);
+  Player.findOne({
+    where: {
+      [op.or]: [
+        {displayName: req.body.displayName},
+        {id: req.body.id},
+        {phoneNumber: req.body.phoneNumber}
+      ]
+    }
+  })
+  .then(function(player) {
+    req.player = player
+    done();
+  })
+}
+
 module.exports = {
   fetchAllPlayers,
+  fetchPlayer,
 }
 
 // function normalizePhoneNumber (req, res, done) {

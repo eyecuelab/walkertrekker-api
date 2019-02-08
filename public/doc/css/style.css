@@ -114,7 +114,7 @@ th {
 
 td {
   vertical-align: top;
-  padding: 10px 8px 0 8px;
+  padding: 2px 8px;
   border: #e0e0e0 1px solid;
 }
 
@@ -126,8 +126,6 @@ td {
 
 .label-optional {
   float: right;
-  background-color: grey;
-  margin-top: 4px;
 }
 
 .open-left {
@@ -172,11 +170,6 @@ pre {
   border-radius: 6px;
   position: relative;
   margin: 10px 0 20px 0;
-  overflow-x: auto;
-}
-
-pre.prettyprint {
-  width: 100%;
 }
 
 code.language-text {
@@ -188,35 +181,38 @@ pre.language-json {
 }
 
 pre.language-html {
-  margin: 0 0 20px 0;
+  margin: 40px 0 20px 0;
 }
 
-.type {
+pre.language-html:before {
+  content: attr(data-type);
+  position: absolute;
+  top: -30px;
+  left: 0;
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 600;
   font-size: 15px;
   display: inline-block;
-  margin: 0 0 5px 0;
-  padding: 4px 5px;
+  padding: 2px 5px;
   border-radius: 6px;
   text-transform: uppercase;
   background-color: #3387CC;
   color: #ffffff;
 }
 
-.type__get {
+pre.language-html[data-type="get"]:before {
   background-color: green;
 }
 
-.type__put {
+pre.language-html[data-type="put"]:before {
   background-color: #e5c500;
 }
 
-.type__post {
+pre.language-html[data-type="post"]:before {
   background-color: #4070ec;
 }
 
-.type__delete {
+pre.language-html[data-type="delete"]:before {
   background-color: #ed0039;
 }
 
@@ -251,9 +247,9 @@ pre code.sample-request-response-json {
 .sidenav {
   width: 228px;
   margin: 0;
-  padding: 0 20px 20px 20px;
+  padding: 20px;
   position: fixed;
-  top: 50px;
+  top: 0;
   left: 0;
   bottom: 0;
   overflow-x: hidden;
@@ -275,11 +271,6 @@ pre code.sample-request-response-json {
   font-size: 14px;
 }
 
-.sidenav > li.nav-header {
-  margin-top: 8px;
-  margin-bottom: 8px;
-}
-
 .sidenav > li.nav-header > a {
   padding: 5px 15px;
   border: 1px solid #e5e5e5;
@@ -290,11 +281,17 @@ pre code.sample-request-response-json {
   background-color: #ffffff;
 }
 
-.sidenav > li.active > a {
-    position: relative;
-    z-index: 2;
-    background-color: #0088cc;
-    color: #ffffff;
+.sidenav > li.nav-header.active > a {
+  background-color: #0088cc;
+}
+
+.sidenav > .active > a {
+  position: relative;
+  z-index: 2;
+}
+
+.sidenav > li > a:hover {
+  background-color: #ffffff;
 }
 
 .sidenav > li.has-modifications a {
@@ -303,34 +300,6 @@ pre code.sample-request-response-json {
 
 .sidenav > li.is-new a {
   border-left: #e5e5e5 4px solid;
-}
-
-/* ------------------------------------------------------------------------------------------
- * Side nav search
- * ------------------------------------------------------------------------------------------ */
-.sidenav-search {
-  width: 228px;
-  left: 0px;
-  position: fixed;
-  padding: 16px 20px 10px 20px;
-  background-color: #F5F5F5;
-  z-index: 11;
-}
-
-.sidenav-search .search {
-  height: 26px;
-}
-
-.search-reset {
-  position: absolute;
-  display: block;
-  cursor: pointer;
-  width: 20px;
-  height: 20px;
-  text-align: center;
-  right: 28px;
-  top: 17px;
-  background-color: #fff;
 }
 
 /* ------------------------------------------------------------------------------------------
@@ -517,12 +486,6 @@ tr.del td {
  * ------------------------------------------------------------------------------------------ */
 ul.nav-tabs {
   margin: 0;
-}
-
-p.deprecated span{
-  color: #ff0000;
-  font-weight: bold;
-  text-decoration: underline;
 }
 
 /* ------------------------------------------------------------------------------------------
