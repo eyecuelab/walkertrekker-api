@@ -14,7 +14,8 @@
     "migrate": "./node_modules/.bin/pg-migrate up",
     "migrate_down": "./node_modules/.bin/pg-migrate down",
     "standard": "./node_modules/.bin/standard",
-    "apidoc": "./node_modules/apidoc/bin/apidoc -i app/routes -o public/doc/"
+    "apidoc": "./node_modules/apidoc/bin/apidoc -i app/routes -o public/doc/",
+    "apidoc-win": "apidoc -i app/routes -o public/doc/",
   },
   "author": "",
   "license": "ISC",
