@@ -4,7 +4,7 @@ var Sequelize = require('sequelize')
 var sequelize = new Sequelize(process.env.DATABASE_URL)
 
 var User = sequelize.import('../app/models/user')
-User.sync()
+// User.sync()
 
 module.exports = function (passport) {
   passport.serializeUser(function (user, done) {

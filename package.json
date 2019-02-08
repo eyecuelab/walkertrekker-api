@@ -10,6 +10,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
+    "start-dev": "nodemon server.js",
     "migrate": "./node_modules/.bin/pg-migrate up",
     "migrate_down": "./node_modules/.bin/pg-migrate down",
     "standard": "./node_modules/.bin/standard",
@@ -43,6 +44,7 @@
   },
   "devDependencies": {
     "apidoc": "^0.16.1",
+    "nodemon": "^1.18.9",
     "socket.io-client": "^1.7.3",
     "standard": "^8.5.0"
   },

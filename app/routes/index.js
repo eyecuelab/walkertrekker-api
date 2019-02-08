@@ -1,4 +1,4 @@
-const resources = [ 'auth', 'users', 'games' ]
+const resources = [ 'auth', 'users', 'games', 'players', ]
 
 function router (app, passport) {
   app.get('/', function (req, res) {
