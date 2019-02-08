@@ -1,5 +1,4 @@
 function PlayerModel (sequelize, DataTypes) {
-  const Campaign = sequelize.import('./campaign')
 
   const Player = sequelize.define('players', {
     id: {
@@ -43,7 +42,7 @@ function PlayerModel (sequelize, DataTypes) {
     return json
   }
 
-  return Player;
+  return Player
 }
 
 module.exports = PlayerModel

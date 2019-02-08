@@ -3,6 +3,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const User = sequelize.import('../models/user')
 const Game = sequelize.import('../models/game')
+const Player = sequelize.import('../models/player')
+const Campaign = sequelize.import('../models/campaign')
 
 function normalizePhoneNumber (req, res, done) {
   User.twilioPhoneLookup(req.body.phone, function (err, number) {
@@ -38,9 +40,19 @@ function fetchGame (req, res, done) {
   })
 }
 
+function fetchAllPlayers (req, res, done) {
+  Player.findAll()
+  .then(function(players) {
+    if (!players) return res.status(401).json({ error: 'Nope.' })
+    req.players = players
+    done()
+  })
+}
+
 module.exports = {
   normalizePhoneNumber,
   loginRequired,
   fetchOpenGame,
-  fetchGame
+  fetchGame,
+  fetchAllPlayers,
 }
