@@ -34,6 +34,7 @@ function PlayerModel (sequelize, DataTypes) {
       displayName: this.displayName,
       phoneNumber: this.phoneNumber,
       inActiveGame: this.inActiveGame,
+      campaignId: this.campaignId,
       health: this.health,
       hunger: this.hunger,
       steps: this.steps,
