@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { fetchCampaign, fetchPlayer } = require('../middlewares');
+const { appKeyCheck, fetchCampaign, fetchPlayer } = require('../middlewares');
 const Campaign = sequelize.import('../models/campaign');
 
 function campaignsRouter (app) {
@@ -54,7 +54,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.get('/api/campaigns', fetchCampaign, function(req, res) {
+  app.get('/api/campaigns', appKeyCheck, fetchCampaign, function(req, res) {
     co(function * () {
       let json = yield req.campaign.toJson();
       return res.json(json)
@@ -110,7 +110,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.post('/api/campaigns', function(req, res) {
+  app.post('/api/campaigns', appKeyCheck, function(req, res) {
     co(function * () {
       const params = req.body.params
       const len = parseInt(params.campaignLength)
@@ -192,7 +192,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.patch('/api/campaigns/join', fetchCampaign, fetchPlayer, function (req, res) {
+  app.patch('/api/campaigns/join', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
     co(function*() {
       campaign = req.campaign
       player = req.player

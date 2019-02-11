@@ -5,6 +5,12 @@ const op = sequelize.Op
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
 
+function appKeyCheck (req, res, done) {
+  if (req.headers['appkey'] !== process.env.CLIENT_APP_KEY) {
+    return res.json({ error: "Unauthorized, invalid client app key."})
+  } else { done() }
+}
+
 function fetchAllPlayers (req, res, done) {
   Player.findAll()
   .then(function(players) {
@@ -40,6 +46,7 @@ function fetchCampaign (req, res, done) {
 }
 
 module.exports = {
+  appKeyCheck,
   fetchAllPlayers,
   fetchPlayer,
   fetchCampaign,
