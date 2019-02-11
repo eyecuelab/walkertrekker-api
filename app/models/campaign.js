@@ -47,14 +47,16 @@ function CampaignModel (sequelize, DataTypes) {
       randomEvents: this.randomEvents,
       numPlayers: this.numPlayers,
       stepTargets: this.stepTargets,
-      foodItems: this.inventory.foodItems,
-      medicineItems: this.medicineItems,
-      weaponItems: this.weaponItems,
+      inventory: this.inventory,
+      players: [],
     }
 
     let players = yield this.getPlayers()
     if (players) {
-      json.players = players.map(player => { return player.toJson() })
+      for (let player of players) {
+        let playerData = yield player.toJson()
+        json.players.push(playerData);
+      }
     }
     return json
   }

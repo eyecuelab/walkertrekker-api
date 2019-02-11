@@ -1,4 +1,4 @@
-const resources = [ 'players', ]
+const resources = [ 'players', 'campaigns' ]
 
 function router (app) {
   app.get('/', function (req, res) {

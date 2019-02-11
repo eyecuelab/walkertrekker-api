@@ -10,7 +10,7 @@ Player.sync();
 function playersRouter (app) {
 
   /**
-   * @api {get} /api/players Get
+   * @api {get} /api/players Fetch All Players
    * @apiName GetAllPlayers
    * @apiGroup Players
    *
@@ -56,7 +56,7 @@ function playersRouter (app) {
   })
 
   /**
-   * @api {post} /api/players Post
+   * @api {post} /api/players Create New Player
    * @apiName Create New Player
    * @apiGroup Players
    *
@@ -94,7 +94,7 @@ function playersRouter (app) {
       }
     }).catch(function(error) {
       console.log(error)
-      return res.json({ error: 'Error' })
+      return res.json({ error: 'Error creating new player' })
     })
   })
 }

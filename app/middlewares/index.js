@@ -15,12 +15,11 @@ function fetchAllPlayers (req, res, done) {
 }
 
 function fetchPlayer (req, res, done) {
-  // console.log(op);
   Player.findOne({
     where: {
       [op.or]: [
         {displayName: req.body.displayName},
-        {id: req.body.id},
+        {id: req.body.playerId},
         {phoneNumber: req.body.phoneNumber}
       ]
     }
@@ -31,9 +30,19 @@ function fetchPlayer (req, res, done) {
   })
 }
 
+function fetchCampaign (req, res, done) {
+  Campaign.findOne({
+    where: { id: req.body.campaignId }
+  }).then(function(campaign) {
+    req.campaign = campaign
+    done()
+  })
+}
+
 module.exports = {
   fetchAllPlayers,
   fetchPlayer,
+  fetchCampaign,
 }
 
 // function normalizePhoneNumber (req, res, done) {
