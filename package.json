@@ -15,7 +15,7 @@
     "migrate_down": "./node_modules/.bin/pg-migrate down",
     "standard": "./node_modules/.bin/standard",
     "apidoc": "./node_modules/apidoc/bin/apidoc -i app/routes -o public/doc/",
-    "apidoc-win": "apidoc -i app/routes -o public/doc/",
+    "apidoc-win": "apidoc -i app/routes -o public/doc/"
   },
   "author": "",
   "license": "ISC",
@@ -39,7 +39,7 @@
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
     "pg-native": "^1.10.0",
-    "sequelize": "^3.30.2",
+    "sequelize": "^4.42.0",
     "socket.io": "^1.7.3",
     "twilio": "^2.11.0"
   },

@@ -1,6 +1,6 @@
-const resources = [ 'auth', 'users', 'games', 'players', ]
+const resources = [ 'players', 'campaigns' ]
 
-function router (app, passport) {
+function router (app) {
   app.get('/', function (req, res) {
     res.render('index.ejs')
   })
@@ -10,7 +10,7 @@ function router (app, passport) {
   })
 
   for (let resource of resources) {
-    require(`./${resource}`)(app, passport)
+    require(`./${resource}`)(app)
   }
 }
 

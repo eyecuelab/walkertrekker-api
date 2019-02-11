@@ -1,6 +1,5 @@
 function CampaignModel (sequelize, DataTypes) {
   const Player = sequelize.import('./player')
-  // const Invite = sequelize.import('./invite')
 
   const Campaign = sequelize.define('campaigns', {
     id: {
@@ -35,14 +34,9 @@ function CampaignModel (sequelize, DataTypes) {
     numPlayers: DataTypes.INTEGER,
     stepTargets: DataTypes.ARRAY(DataTypes.INTEGER),
     inventory: DataTypes.JSONB,
-  }, {
-    classMethods: {},
-    instanceMethods: {
-      toJson,
-    },
   })
 
-  function * toJson (opts = {}) {
+  Campaign.prototype.toJson = function * (opts = {}) {
     let json = {
       id: this.id,
       startDate: this.startDate,
@@ -53,21 +47,21 @@ function CampaignModel (sequelize, DataTypes) {
       randomEvents: this.randomEvents,
       numPlayers: this.numPlayers,
       stepTargets: this.stepTargets,
-      foodItems: this.inventory.foodItems,
-      medicineItems: this.medicineItems,
-      weaponItems: this.weaponItems,
+      inventory: this.inventory,
+      players: [],
     }
 
     let players = yield this.getPlayers()
     if (players) {
-      json.players = players.map(player => { return player.toJson() })
+      for (let player of players) {
+        let playerData = yield player.toJson()
+        json.players.push(playerData);
+      }
     }
-
     return json
   }
 
   Campaign.hasMany(Player)
-
   return Campaign;
 }
 
