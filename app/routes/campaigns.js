@@ -3,18 +3,18 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchCampaign, fetchPlayer } = require('../middlewares');
+const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone } = require('../middlewares');
 const Campaign = sequelize.import('../models/campaign');
 
 function campaignsRouter (app) {
 
   /**
-   * @api {get} /api/campaigns Fetch Campaign
+   * @api {get} /api/campaigns/ Fetch Campaign
    * @apiName Fetch Campaign
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "4028d623-e955-4b16-a7e4-88b555c6cdf3" }' http://localhost:5000/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d "{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }" https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -70,7 +70,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' http://localhost:5000/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -124,6 +124,7 @@ function campaignsRouter (app) {
       if (!params.startNow) startDate.setDate(startDate.getDate() + 1);
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + len-1);
+      endDate.setHours(0,0,0,0)
 
       const newCampaign = Campaign.build({
         id: uuid.v4(),
@@ -147,12 +148,12 @@ function campaignsRouter (app) {
   })
 
   /**
-   * @api {patch} /api/campaigns/join Join Campaign
+   * @api {patch} /api/campaigns/join/:campaignId Join Campaign
    * @apiName Join Campaign
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' http://localhost:5000/api/campaigns/join
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -210,6 +211,38 @@ function campaignsRouter (app) {
       campaign.save()
       let json = yield campaign.toJson();
       return res.json(json);
+    }).catch(function (err) {
+      console.log(err)
+      res.json({ error: 'Error updating game' })
+    })
+  })
+
+  /**
+   * @api {post} /api/campaigns/invite Invite To Campaign
+   * @apiName Invite To Campaign
+   * @apiGroup Campaigns
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "number": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
+   *
+   * @apiSuccess {String} msg: Success
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   {
+     "msg": "SMS invite sent to phone number +15035558989"
+   }
+  */
+
+  app.post('/api/campaigns/invite', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, function(req, res) {
+    co(function*() {
+      let campaign = req.campaign
+      const link = req.body.link ? req.body.link : `walkertrekker://invite/`
+      campaign.sendInvite(req.player, req.phoneNumber, link)
+      return res.json({ msg: `SMS invite sent to phone number ${req.phoneNumber}.` })
+    }).catch(function (err) {
+      console.log(err)
+      res.json({ error: 'Error sending message' })
     })
   })
 }

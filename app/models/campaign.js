@@ -1,3 +1,10 @@
+require('dotenv').config()
+
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+const Twilio = require('twilio')
+const client = Twilio(twilioAccountSid, twilioAuthToken)
+
 function CampaignModel (sequelize, DataTypes) {
   const Player = sequelize.import('./player')
 
@@ -36,6 +43,8 @@ function CampaignModel (sequelize, DataTypes) {
     inventory: DataTypes.JSONB,
   })
 
+  Campaign.hasMany(Player)
+
   Campaign.prototype.toJson = function * (opts = {}) {
     let json = {
       id: this.id,
@@ -61,7 +70,20 @@ function CampaignModel (sequelize, DataTypes) {
     return json
   }
 
-  Campaign.hasMany(Player)
+  Campaign.prototype.sendInvite = function(player, number, link) {
+    const linkWithId = link + this.id
+    const msg = `${player.displayName} has invited you to join their Walker Trekker campaign. Tap here to join: ${linkWithId}`
+    console.log(`--------------sending--------------`)
+    console.log(`to: ${number}`)
+    console.log(`message: ${msg}`)
+    console.log(`-------------- --------------`)
+    client.messages.create({
+      body: msg,
+      to: number,
+      from: process.env.TWILIO_NUMBER
+    }).then(message => console.log(`SMS message sent, sid: ${message.sid}`))
+  }
+
   return Campaign;
 }
 

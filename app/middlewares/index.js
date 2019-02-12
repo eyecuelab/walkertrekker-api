@@ -1,6 +1,12 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const op = sequelize.Op
+require('dotenv').config()
+
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+const Twilio = require('twilio')
+const client = Twilio(twilioAccountSid, twilioAuthToken)
 
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
@@ -14,7 +20,7 @@ function appKeyCheck (req, res, done) {
 function fetchAllPlayers (req, res, done) {
   Player.findAll()
   .then(function(players) {
-    if (!players) return res.status(401).json({ error: 'Nope.' })
+    if (players.length == 0) return res.json({ error: 'No players found' })
     req.players = players
     done()
   })
@@ -45,13 +51,27 @@ function fetchCampaign (req, res, done) {
   })
 }
 
+function lookupPhone (req, res, done) {
+  client.lookups.phoneNumbers(req.body.number).fetch()
+  .then(phone => {
+    req.phoneNumber = phone.phoneNumber
+    req.sid = phone.sid
+    done()
+  }).catch(err => console.log(err.message))
+}
+
 module.exports = {
   appKeyCheck,
   fetchAllPlayers,
   fetchPlayer,
   fetchCampaign,
+  lookupPhone,
 }
 
+// function twilioPhoneLookup (phone, cb) {
+//   lookupsClient.phoneNumbers(phone).get(cb)
+// }
+//
 // function normalizePhoneNumber (req, res, done) {
   //   User.twilioPhoneLookup(req.body.phone, function (err, number) {
     //     if (err) return res.json({ error: 'Invalid phone number' })

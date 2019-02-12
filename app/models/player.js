@@ -1,3 +1,6 @@
+const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
+const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+
 function PlayerModel (sequelize, DataTypes) {
 
   const Player = sequelize.define('players', {
@@ -35,6 +38,10 @@ function PlayerModel (sequelize, DataTypes) {
       steps: this.steps,
     }
     return json
+  }
+
+  Player.prototype.sendInvite = function * (opts = {}) {
+
   }
 
   return Player
