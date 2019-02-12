@@ -8,7 +8,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\", \"startNow\": true } }' http://localhost:5000/api/campaigns",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\", \"startNow\": true } }' https://walkertrekker.herokuapp.com/api/campaigns",
         "type": "curl"
       }
     ],
@@ -129,14 +129,14 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/api/campaigns",
+    "url": "/api/campaigns/",
     "title": "Fetch Campaign",
     "name": "Fetch_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"campaignId\": \"4028d623-e955-4b16-a7e4-88b555c6cdf3\" }' http://localhost:5000/api/campaigns",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d \"{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }\" https://walkertrekker.herokuapp.com/api/campaigns",
         "type": "curl"
       }
     ],
@@ -256,15 +256,52 @@ define({ "api": [
     "groupTitle": "Campaigns"
   },
   {
+    "type": "post",
+    "url": "/api/campaigns/invite",
+    "title": "Invite To Campaign",
+    "name": "Invite_To_Campaign",
+    "group": "Campaigns",
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\", \"number\": \"5035558989\", \"link\": \"(this is optional)\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/",
+        "type": "curl"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg:",
+            "description": "<p>Success</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n   \"msg\": \"SMS invite sent to phone number +15035558989\"\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/routes/campaigns.js",
+    "groupTitle": "Campaigns"
+  },
+  {
     "type": "patch",
-    "url": "/api/campaigns/join",
+    "url": "/api/campaigns/join/:campaignId",
     "title": "Join Campaign",
     "name": "Join_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' http://localhost:5000/api/campaigns/join",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H \"auth_token: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/",
         "type": "curl"
       }
     ],

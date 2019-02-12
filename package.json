@@ -41,7 +41,7 @@
     "pg-native": "^1.10.0",
     "sequelize": "^4.42.0",
     "socket.io": "^1.7.3",
-    "twilio": "^2.11.0"
+    "twilio": "^3.28.0"
   },
   "devDependencies": {
     "apidoc": "^0.16.1",
