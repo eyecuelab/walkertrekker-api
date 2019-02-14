@@ -71,8 +71,7 @@ function CampaignModel (sequelize, DataTypes) {
   }
 
   Campaign.prototype.sendInvite = function(player, number, link) {
-    const linkWithId = link + this.id
-    const msg = `${player.displayName} has invited you to join their Walker Trekker campaign. Tap here to join: ${linkWithId}`
+    const msg = `${player.displayName} has invited you to join their Walker Trekker campaign. Tap here to join: ${link}`
     console.log(`--------------sending--------------`)
     console.log(`to: ${number}`)
     console.log(`message: ${msg}`)

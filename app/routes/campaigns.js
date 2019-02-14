@@ -3,8 +3,9 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone } = require('../middlewares');
+const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign } = require('../middlewares');
 const Campaign = sequelize.import('../models/campaign');
+const Player = sequelize.import('../models/player');
 
 function campaignsRouter (app) {
 
@@ -14,7 +15,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d "{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }" https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d "{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }" https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -70,7 +71,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -153,7 +154,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -223,9 +224,9 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H "auth_token: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "number": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "phoneNumber": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
    *
-   * @apiSuccess {String} msg: Success
+   * @apiSuccess {String} msg Success
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -234,11 +235,14 @@ function campaignsRouter (app) {
    }
   */
 
-  app.post('/api/campaigns/invite', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, function(req, res) {
+  app.post('/api/campaigns/invite', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
     co(function*() {
+      if (res.error) {
+        return res.json(res.error)
+      }
       let campaign = req.campaign
-      const link = req.body.link ? req.body.link : `walkertrekker://invite/`
-      campaign.sendInvite(req.player, req.phoneNumber, link)
+      const link = req.body.link ? req.body.link : `walkertrekker://invite?campaignId=${campaign.id}`
+      // campaign.sendInvite(req.player, req.phoneNumber, link)
       return res.json({ msg: `SMS invite sent to phone number ${req.phoneNumber}.` })
     }).catch(function (err) {
       console.log(err)

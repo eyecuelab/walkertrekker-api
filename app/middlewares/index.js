@@ -52,12 +52,24 @@ function fetchCampaign (req, res, done) {
 }
 
 function lookupPhone (req, res, done) {
-  client.lookups.phoneNumbers(req.body.number).fetch()
+  client.lookups.phoneNumbers(req.body.phoneNumber).fetch()
   .then(phone => {
     req.phoneNumber = phone.phoneNumber
     req.sid = phone.sid
     done()
-  }).catch(err => console.log(err.message))
+  }).catch(err => { res.error = err; done() })
+}
+
+function checkPlayerInActiveCampaign (req, res, done) {
+  Player.findOne({
+    where: { phoneNumber: req.phoneNumber }
+  }).then(function(player) {
+    if (player.campaignId != null) {
+      return res.json({ error: 'This player is already in an active campaign and cannot be invited.' })
+    } else {
+      done()
+    }
+  })
 }
 
 module.exports = {
@@ -66,6 +78,7 @@ module.exports = {
   fetchPlayer,
   fetchCampaign,
   lookupPhone,
+  checkPlayerInActiveCampaign,
 }
 
 // function twilioPhoneLookup (phone, cb) {

@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchAllPlayers, fetchPlayer } = require('../middlewares');
+const { appKeyCheck, fetchAllPlayers, fetchPlayer, lookupPhone } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 
 function playersRouter (app) {
@@ -76,15 +76,17 @@ function playersRouter (app) {
        "inActiveGame": false
    }
   */
-  app.post('/api/players', appKeyCheck, fetchPlayer, function(req, res) {
+  app.post('/api/players', appKeyCheck, fetchPlayer, lookupPhone, function(req, res) {
     co(function * () {
       if (req.player) {
         return res.json({ error: `Player already exists, cannot create this player.`})
+      } else if (res.error) {
+        return res.json(res.error)
       } else {
         const newPlayer = Player.build({
           id: uuid.v4(),
           displayName: req.body.displayName,
-          phoneNumber: req.body.phoneNumber ? req.body.phoneNumber : null,
+          phoneNumber: req.phoneNumber,
           inActiveGame: false,
         })
         newPlayer.save()
