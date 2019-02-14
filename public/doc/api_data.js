@@ -8,7 +8,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\", \"startNow\": true } }' https://walkertrekker.herokuapp.com/api/campaigns",
+        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\", \"startNow\": true } }' https://walkertrekker.herokuapp.com/api/campaigns",
         "type": "curl"
       }
     ],
@@ -136,7 +136,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5",
+        "content": "curl -X DELETE -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -180,7 +180,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -308,7 +308,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\", \"phoneNumber\": \"5035558989\", \"link\": \"(this is optional)\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
+        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\", \"phoneNumber\": \"5035558989\", \"link\": \"(this is optional)\" }' https://walkertrekker.herokuapp.com/api/campaigns/invite/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -345,7 +345,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
+        "content": "curl -X PATCH -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -473,7 +473,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignUpdate\": { \"currentDay\": 1, \"inventory\": { \"foodItems\": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
+        "content": "curl -X PATCH -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignUpdate\": { \"currentDay\": 1, \"inventory\": { \"foodItems\": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -548,7 +548,7 @@ define({ "api": [
             "type": "Object",
             "optional": false,
             "field": "inventory",
-            "description": ""
+            "description": "<p>NOTE: if updating at least one inventory item, need to specify EACH in the body of your update.</p>"
           },
           {
             "group": "Success 200",
@@ -601,7 +601,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -H -d '{\"displayName\": \"Oscar Robertson\", \"phoneNumber\": * \"5035558989\"}' http://localhost:5000/api/players",
+        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -H -d '{\"displayName\": \"Oscar Robertson\", \"phoneNumber\": \"5035558989\"}' http://walkertrekker.herokuapp.com/api/players",
         "type": "curl"
       }
     ],
@@ -659,7 +659,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H  http://localhost:5000/api/players",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H  http://walkertrekker.herokuapp.com/api/players",
         "type": "curl"
       }
     ],
@@ -745,7 +745,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H -d '{ \"playerId\": \"58568813-712d-451b-9125-4103c6f1d7e5\", \"playerUpdate\": { \"hunger\" 88, \"steps\": [1698, 0, 0, 0, ...] } }' http://localhost:5000/api/players",
+        "content": "curl -X PATCH -H \"Content-type: application/json\" -H \"appkey: abc\" -H -d '{ \"playerId\": \"58568813-712d-451b-9125-4103c6f1d7e5\", \"playerUpdate\": { \"hunger\" 88, \"steps\": [1698, 0, 0, 0, ...] } }' http://walkertrekker.herokuapp.com/api/players",
         "type": "curl"
       }
     ],

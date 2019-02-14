@@ -15,7 +15,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -57,11 +57,14 @@ function campaignsRouter (app) {
   */
   app.get('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(function * () {
+      if (req.campaign == null) {
+        return res.json({ error: 'No campaign found with specified campaignId'})
+      }
       let json = yield req.campaign.toJson();
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
-      res.json({ error: 'Error fetching a game' })
+      res.json({ error: 'Error fetching a campaign' })
     })
   })
 
@@ -71,7 +74,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -154,7 +157,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -195,9 +198,9 @@ function campaignsRouter (app) {
    }
   */
   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
-    co(function*() {
-      campaign = req.campaign
-      player = req.player
+    co(async function() {
+      let campaign = req.campaign
+      let player = req.player
       if (campaign.numPlayers == 5) {
         return res.json({ error: `Sorry, this campaign is full.`})
       }
@@ -208,16 +211,16 @@ function campaignsRouter (app) {
       player.health = 100
       let steps = []
       for (let i=0; i < parseInt(campaign.length); i++) {
-        steps[i] = 0
+        steps.push(0)
       }
       player.steps = steps
-      player.save()
-      campaign.save()
-      let json = yield campaign.toJson()
+      await player.save()
+      await campaign.save()
+      let json = await campaign.toJson()
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
-      res.json({ error: 'Error updating game' })
+      res.json({ error: 'Error joining game' })
     })
   })
   /**
@@ -226,7 +229,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -237,7 +240,7 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
+   * @apiSuccess {Object} inventory NOTE: if updating at least one inventory item, need to specify EACH in the body of your update.
    * @apiSuccess {Integer} inventory.foodItems
    * @apiSuccess {Integer} inventory.medicineItems
    * @apiSuccess {Integer} inventory.weaponItems
@@ -285,7 +288,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "phoneNumber": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "phoneNumber": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/invite/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} msg Success
    *
@@ -320,7 +323,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X DELETE -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} msg Success
    * @apiSuccess {Player[]} players Array of player instances previously associated with this game
@@ -350,7 +353,7 @@ function campaignsRouter (app) {
           steps: null,
           inActiveGame: false,
         })
-        let playerData = yield player.toJson()
+        let playerData = player.toJson()
         json.players.push(playerData)
       }
       campaign.destroy()

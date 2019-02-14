@@ -26,7 +26,7 @@ function PlayerModel (sequelize, DataTypes) {
     steps: DataTypes.ARRAY(DataTypes.INTEGER),
   })
 
-  Player.prototype.toJson = function * (opts = {}) {
+  Player.prototype.toJson = function() {
     let json = {
       id: this.id,
       displayName: this.displayName,
@@ -38,10 +38,6 @@ function PlayerModel (sequelize, DataTypes) {
       steps: this.steps,
     }
     return json
-  }
-
-  Player.prototype.sendInvite = function * (opts = {}) {
-
   }
 
   return Player

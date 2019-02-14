@@ -14,7 +14,7 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://localhost:5000/api/players
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name
@@ -44,7 +44,7 @@ function playersRouter (app) {
     co(function * () {
       let arr = []
       for (let player of req.players) {
-        let json = yield player.toJson();
+        let json = player.toJson();
         arr.push(json);
       }
       return res.json(arr)
@@ -60,7 +60,7 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H -d '{"displayName": "Oscar Robertson", "phoneNumber": * "5035558989"}' http://localhost:5000/api/players
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H -d '{"displayName": "Oscar Robertson", "phoneNumber": "5035558989"}' http://walkertrekker.herokuapp.com/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name
@@ -105,7 +105,7 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H -d '{ "playerId": "58568813-712d-451b-9125-4103c6f1d7e5", "playerUpdate": { "hunger" 88, "steps": [1698, 0, 0, 0, ...] } }' http://localhost:5000/api/players
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -H -d '{ "playerId": "58568813-712d-451b-9125-4103c6f1d7e5", "playerUpdate": { "hunger" 88, "steps": [1698, 0, 0, 0, ...] } }' http://walkertrekker.herokuapp.com/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name
@@ -135,7 +135,7 @@ function playersRouter (app) {
     co(function* () {
       let player = req.player
       player.update(req.body.playerUpdate)
-      let json = yield player.toJson()
+      let json = player.toJson()
       return res.json(json)
     }).catch(function(err) {
       console.log(err)

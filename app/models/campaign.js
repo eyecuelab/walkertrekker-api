@@ -45,7 +45,7 @@ function CampaignModel (sequelize, DataTypes) {
 
   Campaign.hasMany(Player)
 
-  Campaign.prototype.toJson = function * (opts = {}) {
+  Campaign.prototype.toJson = async function() {
     let json = {
       id: this.id,
       startDate: this.startDate,
@@ -60,10 +60,10 @@ function CampaignModel (sequelize, DataTypes) {
       players: [],
     }
 
-    let players = yield this.getPlayers()
+    let players = await this.getPlayers()
     if (players) {
       for (let player of players) {
-        let playerData = yield player.toJson()
+        let playerData = player.toJson()
         json.players.push(playerData);
       }
     }
