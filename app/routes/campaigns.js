@@ -303,7 +303,7 @@ function campaignsRouter (app) {
       }
       let campaign = req.campaign
       const link = req.body.link ? req.body.link : `walkertrekker://invite?campaignId=${campaign.id}`
-      // campaign.sendInvite(req.player, req.phoneNumber, link)
+      campaign.sendInvite(req.player, req.phoneNumber, link)
       return res.json({ msg: `SMS invite sent to phone number ${req.phoneNumber}.` })
     }).catch(function (err) {
       console.log(err)
