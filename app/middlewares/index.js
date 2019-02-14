@@ -64,11 +64,10 @@ function checkPlayerInActiveCampaign (req, res, done) {
   Player.findOne({
     where: { phoneNumber: req.phoneNumber }
   }).then(function(player) {
-    if (player.inActiveGame) {
+    if (player == null) { done() }
+    else if (player.inActiveGame !== null) {
       return res.json({ error: 'This player is already in an active campaign and cannot be invited.' })
-    } else {
-      done()
-    }
+    } else { done() }
   })
 }
 
