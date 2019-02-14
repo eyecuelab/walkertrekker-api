@@ -313,6 +313,53 @@ function campaignsRouter (app) {
       res.json({ error: 'Error sending message' })
     })
   })
+
+  /**
+   * @api {delete} /api/campaigns/:campaignId Destroy Campaign
+   * @apiName Destroy Campaign
+   * @apiGroup Campaigns
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
+   *
+   * @apiSuccess {String} msg Success
+   * @apiSuccess {Player[]} players Array of player instances previously associated with this game
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   {
+     "msg": "Campaign 58568813-712d-451b-9125-4103c6f1d7e5 has been deleted from database",
+     "players": [...]
+   }
+  */
+
+  app.delete('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
+    co(function*() {
+      let campaign = req.campaign
+      let campaignId = campaign.id
+      let players = yield campaign.getPlayers()
+      let json = {
+        players: [],
+        msg: `Campaign ${campaignId} has been deleted from database.`
+      }
+      for (let player of players) {
+        player.update({
+          campaignId: null,
+          health: null,
+          hunger: null,
+          steps: null,
+          inActiveGame: false,
+        })
+        let playerData = yield player.toJson()
+        json.players.push(playerData)
+      }
+      campaign.destroy()
+      return res.json(json)
+    }).catch(function (err) {
+      console.log(err)
+      res.json({ error: 'Error deleting campaign.' })
+    })
+  })
 }
 
 module.exports = campaignsRouter

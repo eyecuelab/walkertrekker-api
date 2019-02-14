@@ -128,6 +128,50 @@ define({ "api": [
     "groupTitle": "Campaigns"
   },
   {
+    "type": "delete",
+    "url": "/api/campaigns/:campaignId",
+    "title": "Destroy Campaign",
+    "name": "Destroy_Campaign",
+    "group": "Campaigns",
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5",
+        "type": "curl"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "msg",
+            "description": "<p>Success</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Player[]",
+            "optional": false,
+            "field": "players",
+            "description": "<p>Array of player instances previously associated with this game</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n   \"msg\": \"Campaign 58568813-712d-451b-9125-4103c6f1d7e5 has been deleted from database\",\n   \"players\": [...]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/routes/campaigns.js",
+    "groupTitle": "Campaigns"
+  },
+  {
     "type": "get",
     "url": "/api/campaigns/:campaignId",
     "title": "Fetch Campaign",
