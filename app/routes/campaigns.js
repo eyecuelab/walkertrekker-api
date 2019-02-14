@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign } = require('../middlewares');
+const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, } = require('../middlewares');
 const Campaign = sequelize.import('../models/campaign');
 const Player = sequelize.import('../models/player');
 
@@ -149,7 +149,7 @@ function campaignsRouter (app) {
   })
 
   /**
-   * @api {patch} /api/campaigns/join/:campaignId Join Campaign
+   * @api {patch} /api/campaigns/join/ Join Campaign
    * @apiName Join Campaign
    * @apiGroup Campaigns
    *
@@ -198,6 +198,9 @@ function campaignsRouter (app) {
     co(function*() {
       campaign = req.campaign
       player = req.player
+      if (campaign.numPlayers == 5) {
+        return res.json({ error: `Sorry, this campaign is full.`})
+      }
       campaign.addPlayer(player)
       campaign.numPlayers++
       player.inActiveGame = true
@@ -210,8 +213,66 @@ function campaignsRouter (app) {
       player.steps = steps
       player.save()
       campaign.save()
-      let json = yield campaign.toJson();
-      return res.json(json);
+      let json = yield campaign.toJson()
+      return res.json(json)
+    }).catch(function (err) {
+      console.log(err)
+      res.json({ error: 'Error updating game' })
+    })
+  })
+  /**
+   * @api {patch} /api/campaigns Update Campaign
+   * @apiName Update Campaign
+   * @apiGroup Campaigns
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *
+   * @apiSuccess {String} id Campaign UUID
+   * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
+   * @apiSuccess {Date} endDate Last day of campaign
+   * @apiSuccess {Integer} currentDay Current step of campaign (default: 0)
+   * @apiSuccess {String} length '15', '30', '90'
+   * @apiSuccess {String} difficultyLevel 'easy', 'hard', 'xtreme'
+   * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
+   * @apiSuccess {Integer} numPlayers
+   * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
+   * @apiSuccess {Object} inventory
+   * @apiSuccess {Integer} inventory.foodItems
+   * @apiSuccess {Integer} inventory.medicineItems
+   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Player[]} players array of player instances associated with this game
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   {
+       "id": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5",
+       "startDate": "2019-02-08",
+       "endDate": "2019-03-10",
+       "currentDay": 1,
+       "length": "30",
+       "difficultyLevel": "hard",
+       "randomEvents": "low",
+       "numPlayers": 0,
+       "stepTargets": [
+           6000,
+           0, ...
+       ],
+       "inventory": {
+           "foodItems": 5,
+           "weaponItems": 0,
+           "medicineItems": 0
+       },
+       "players": [...]
+   }
+  */
+
+  app.patch('/api/campaigns/', appKeyCheck, fetchCampaign, function(req, res) {
+    co(function*() {
+      let campaign = req.campaign
+      campaign.update(req.body.campaignUpdate)
+      let json = yield campaign.toJson()
+      return res.json(json)
     }).catch(function (err) {
       console.log(err)
       res.json({ error: 'Error updating game' })
