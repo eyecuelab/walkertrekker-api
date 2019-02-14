@@ -37,6 +37,10 @@ function fetchPlayer (req, res, done) {
     }
   })
   .then(function(player) {
+    if (player == null) {
+      console.log('No player found')
+      return res.json({error: 'No player found.'})
+    }
     req.player = player
     done();
   })
