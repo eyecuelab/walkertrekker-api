@@ -10,12 +10,12 @@ const Player = sequelize.import('../models/player');
 function campaignsRouter (app) {
 
   /**
-   * @api {get} /api/campaigns/ Fetch Campaign
+   * @api {get} /api/campaigns/:campaignId Fetch Campaign
    * @apiName Fetch Campaign
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d "{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }" https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/1111-11111-5668632186
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -55,7 +55,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.get('/api/campaigns', appKeyCheck, fetchCampaign, function(req, res) {
+  app.get('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(function * () {
       let json = yield req.campaign.toJson();
       return res.json(json)
@@ -66,7 +66,7 @@ function campaignsRouter (app) {
   })
 
   /**
-   * @api {post} /api/campaigns Create New Campaign
+   * @api {post} /api/campaigns/ Create New Campaign
    * @apiName Create New Campaign
    * @apiGroup Campaigns
    *
@@ -111,7 +111,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.post('/api/campaigns', appKeyCheck, function(req, res) {
+  app.post('/api/campaigns/', appKeyCheck, function(req, res) {
     co(function * () {
       const params = req.body.params
       const len = parseInt(params.campaignLength)
@@ -149,7 +149,7 @@ function campaignsRouter (app) {
   })
 
   /**
-   * @api {patch} /api/campaigns/join/ Join Campaign
+   * @api {patch} /api/campaigns/join/:campaignId Join Campaign
    * @apiName Join Campaign
    * @apiGroup Campaigns
    *
@@ -194,7 +194,7 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.patch('/api/campaigns/join', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
+  app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
     co(function*() {
       campaign = req.campaign
       player = req.player
@@ -221,7 +221,7 @@ function campaignsRouter (app) {
     })
   })
   /**
-   * @api {patch} /api/campaigns Update Campaign
+   * @api {patch} /api/campaigns/:campaignId Update Campaign
    * @apiName Update Campaign
    * @apiGroup Campaigns
    *
@@ -267,7 +267,7 @@ function campaignsRouter (app) {
    }
   */
 
-  app.patch('/api/campaigns/', appKeyCheck, fetchCampaign, function(req, res) {
+  app.patch('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(function*() {
       let campaign = req.campaign
       campaign.update(req.body.campaignUpdate)
@@ -280,7 +280,7 @@ function campaignsRouter (app) {
   })
 
   /**
-   * @api {post} /api/campaigns/invite Invite To Campaign
+   * @api {post} /api/campaigns/invite/:campaignId Invite To Campaign
    * @apiName Invite To Campaign
    * @apiGroup Campaigns
    *
@@ -296,7 +296,7 @@ function campaignsRouter (app) {
    }
   */
 
-  app.post('/api/campaigns/invite', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
+  app.post('/api/campaigns/invite/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
     co(function*() {
       if (req.player == 'No player found') {
         return res.json({ error: 'No player found with specified playerId, cannot send invite.'})

@@ -38,7 +38,6 @@ function fetchPlayer (req, res, done) {
   })
   .then(function(player) {
     if (player == null) {
-      console.log('hit')
       req.player = 'No player found'
     } else {
       req.player = player
@@ -49,7 +48,7 @@ function fetchPlayer (req, res, done) {
 
 function fetchCampaign (req, res, done) {
   Campaign.findOne({
-    where: { id: req.body.campaignId }
+    where: { id: req.params.campaignId }
   }).then(function(campaign) {
     req.campaign = campaign
     done()
