@@ -15,7 +15,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/1111-11111-5668632186
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -154,7 +154,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -226,7 +226,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -285,7 +285,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignId": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5", "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "phoneNumber": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7", "phoneNumber": "5035558989", "link": "(this is optional)" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} msg Success
    *

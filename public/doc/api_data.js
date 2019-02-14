@@ -1,7 +1,7 @@
 define({ "api": [
   {
     "type": "post",
-    "url": "/api/campaigns",
+    "url": "/api/campaigns/",
     "title": "Create New Campaign",
     "name": "Create_New_Campaign",
     "group": "Campaigns",
@@ -129,14 +129,14 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/api/campaigns/",
+    "url": "/api/campaigns/:campaignId",
     "title": "Fetch Campaign",
     "name": "Fetch_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d \"{ campaignId: '4028d623-e955-4b16-a7e4-88b555c6cdf3' }\" https://walkertrekker.herokuapp.com/api/campaigns",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -257,14 +257,14 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/api/campaigns/invite",
+    "url": "/api/campaigns/invite/:campaignId",
     "title": "Invite To Campaign",
     "name": "Invite_To_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\", \"phoneNumber\": \"5035558989\", \"link\": \"(this is optional)\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\", \"phoneNumber\": \"5035558989\", \"link\": \"(this is optional)\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -294,14 +294,14 @@ define({ "api": [
   },
   {
     "type": "patch",
-    "url": "/api/campaigns/join/",
+    "url": "/api/campaigns/join/:campaignId",
     "title": "Join Campaign",
     "name": "Join_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"7dd089c0-7f4b-4f39-a662-53554834a8f7\" }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
@@ -422,14 +422,14 @@ define({ "api": [
   },
   {
     "type": "patch",
-    "url": "/api/campaigns",
+    "url": "/api/campaigns/:campaignId",
     "title": "Update Campaign",
     "name": "Update_Campaign",
     "group": "Campaigns",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignId\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\", \"campaignUpdate\": { \"currentDay\": 1, \"inventory\": { \"foodItems\": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"campaignUpdate\": { \"currentDay\": 1, \"inventory\": { \"foodItems\": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/join/58568813-712d-451b-9125-4103c6f1d7e5",
         "type": "curl"
       }
     ],
