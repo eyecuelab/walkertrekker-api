@@ -78,7 +78,7 @@ function playersRouter (app) {
   */
   app.post('/api/players', appKeyCheck, fetchPlayer, lookupPhone, function(req, res) {
     co(function * () {
-      if (req.player) {
+      if (req.player !== 'No player found') {
         return res.json({ error: `Player already exists, cannot create this player.`})
       } else if (res.error) {
         return res.json(res.error)

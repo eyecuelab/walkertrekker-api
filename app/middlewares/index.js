@@ -38,10 +38,11 @@ function fetchPlayer (req, res, done) {
   })
   .then(function(player) {
     if (player == null) {
-      console.log('No player found')
-      return res.json({error: 'No player found.'})
+      console.log('hit')
+      req.player = 'No player found'
+    } else {
+      req.player = player
     }
-    req.player = player
     done();
   })
 }
@@ -69,7 +70,7 @@ function checkPlayerInActiveCampaign (req, res, done) {
     where: { phoneNumber: req.phoneNumber }
   }).then(function(player) {
     if (player == null) { done() }
-    else if (player.inActiveGame !== null) {
+    else if (player.inActiveGame == true) {
       return res.json({ error: 'This player is already in an active campaign and cannot be invited.' })
     } else { done() }
   })

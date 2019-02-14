@@ -298,6 +298,9 @@ function campaignsRouter (app) {
 
   app.post('/api/campaigns/invite', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
     co(function*() {
+      if (req.player == 'No player found') {
+        return res.json({ error: 'No player found with specified playerId, cannot send invite.'})
+      }
       if (res.error) {
         return res.json(res.error)
       }
