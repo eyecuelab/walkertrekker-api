@@ -781,13 +781,13 @@ define({ "api": [
   {
     "type": "get",
     "url": "/api/players",
-    "title": "Fetch All Players",
-    "name": "Get_All_Players",
+    "title": "Fetch Player",
+    "name": "Fetch_Player",
     "group": "Players",
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H  http://walkertrekker.herokuapp.com/api/players",
+        "content": "curl -X GET -H \"Content-type: application/json\" -H \"appkey: abc\" -H  http://walkertrekker.herokuapp.com/api/players/:playerId",
         "type": "curl"
       }
     ],
@@ -855,7 +855,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "  HTTP/1.1 200 OK\n[\n {\n    \"id\": \"58568813-712d-451b-9125-4103c6f1d7e5\",\n    \"displayName\": \"Wilt Chamberlain\",\n    \"phoneNumber\": \"+15035551582\",\n    \"inActiveGame\": false,\n    \"campaignId\": null,\n    \"health\": null,\n    \"hunger\": null,\n     \"steps\": null\n   }\n]",
+          "content": " HTTP/1.1 200 OK\n{\n   \"id\": \"58568813-712d-451b-9125-4103c6f1d7e5\",\n   \"displayName\": \"Wilt Chamberlain\",\n   \"phoneNumber\": \"+15035551582\",\n   \"inActiveGame\": false,\n   \"campaignId\": null,\n   \"health\": null,\n   \"hunger\": null,\n    \"steps\": null\n  }",
           "type": "json"
         }
       ]

@@ -17,15 +17,6 @@ function appKeyCheck (req, res, done) {
   } else { done() }
 }
 
-function fetchAllPlayers (req, res, done) {
-  Player.findAll()
-  .then(function(players) {
-    if (players.length == 0) return res.json({ error: 'No players found' })
-    req.players = players
-    done()
-  })
-}
-
 function fetchPlayer (req, res, done) {
   Player.findOne({
     where: {
@@ -77,7 +68,6 @@ function checkPlayerInActiveCampaign (req, res, done) {
 
 module.exports = {
   appKeyCheck,
-  fetchAllPlayers,
   fetchPlayer,
   fetchCampaign,
   lookupPhone,

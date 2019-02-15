@@ -3,19 +3,19 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchAllPlayers, fetchPlayer, lookupPhone } = require('../middlewares');
+const { appKeyCheck, playerLookup, fetchPlayer, lookupPhone } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
 function playersRouter (app) {
 
   /**
-   * @api {get} /api/players Fetch All Players
-   * @apiName Get All Players
+   * @api {get} /api/players/:playerId Fetch Player
+   * @apiName Fetch Player
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/players
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/players/:playerId
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name
@@ -28,7 +28,6 @@ function playersRouter (app) {
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
-   * [
    *  {
    *     "id": "58568813-712d-451b-9125-4103c6f1d7e5",
    *     "displayName": "Wilt Chamberlain",
@@ -39,16 +38,17 @@ function playersRouter (app) {
    *     "hunger": null,
    *      "steps": null
    *    }
-   * ]
   */
-  app.get('/api/players', appKeyCheck, fetchAllPlayers, function(req, res) {
-    co(function * () {
-      let arr = []
-      for (let player of req.players) {
-        let json = player.toJson();
-        arr.push(json);
+  app.get('/api/players/:playerId', appKeyCheck, fetchPlayer, function(req, res) {
+    co(async function () {
+      let player = await Player.findOne({
+        where: { id: req.params.playerId }
+      })
+      if (player == null) {
+        return res.json({ error: 'No player found with specified player ID' })
       }
-      return res.json(arr)
+      let json = await player.toJson()
+      return res.json(json)
     }).catch(function(err) {
       console.log(err)
       res.json({ error: 'Error fetching players' })
