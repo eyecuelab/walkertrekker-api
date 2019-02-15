@@ -282,8 +282,9 @@ function campaignsRouter (app) {
         steps: null,
         inActiveGame: false,
       })
+      let numPlayers = campaign.numPlayers - 1
       await campaign.update({
-        numPlayers: campaign.numPlayers--
+        numPlayers
       })
       let json = await campaign.toJson()
       return res.json(json)
