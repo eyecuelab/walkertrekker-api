@@ -184,7 +184,7 @@ function campaignsRouter (app) {
        "length": "30",
        "difficultyLevel": "hard",
        "randomEvents": "low",
-       "numPlayers": 0,
+       "numPlayers": 3,
        "stepTargets": [
            6000,
            0, ...
@@ -194,7 +194,7 @@ function campaignsRouter (app) {
            "weaponItems": 0,
            "medicineItems": 0
        },
-       "players": []
+       "players": [...]
    }
   */
   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
@@ -223,6 +223,73 @@ function campaignsRouter (app) {
       res.json({ error: 'Error joining game' })
     })
   })
+
+  /**
+   * @api {patch} /api/campaigns/leave/:campaignId Leave Campaign
+   * @apiName Leave Campaign
+   * @apiGroup Campaigns
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "7dd089c0-7f4b-4f39-a662-53554834a8f7" }' https://walkertrekker.herokuapp.com/api/campaigns/leave/58568813-712d-451b-9125-4103c6f1d7e5
+   *
+   * @apiSuccess {String} id Campaign UUID
+   * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
+   * @apiSuccess {Date} endDate Last day of campaign
+   * @apiSuccess {Integer} currentDay Current step of campaign (default: 0)
+   * @apiSuccess {String} length '15', '30', '90'
+   * @apiSuccess {String} difficultyLevel 'easy', 'hard', 'xtreme'
+   * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
+   * @apiSuccess {Integer} numPlayers
+   * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
+   * @apiSuccess {Object} inventory
+   * @apiSuccess {Integer} inventory.foodItems
+   * @apiSuccess {Integer} inventory.medicineItems
+   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   {
+       "id": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5",
+       "startDate": "2019-02-08",
+       "endDate": "2019-03-10",
+       "currentDay": 0,
+       "length": "30",
+       "difficultyLevel": "hard",
+       "randomEvents": "low",
+       "numPlayers": 2,
+       "stepTargets": [
+           6000,
+           0, ...
+       ],
+       "inventory": {
+           "foodItems": 0,
+           "weaponItems": 0,
+           "medicineItems": 0
+       },
+       "players": [...]
+   }
+  */
+
+  app.patch('/api/campaigns/leave/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function(req, res) {
+    co(async function() {
+      let player = req.player
+      let campaign = req.campaign
+      campaign.removePlayer(player)
+      await player.update({
+        health: null,
+        hunger: null,
+        steps: null,
+        inActiveGame: false,
+      })
+      await campaign.update({
+        numPlayers: campaign.numPlayers--
+      })
+      let json = await campaign.toJson()
+      return res.json(json)
+    })
+  })
+
   /**
    * @api {patch} /api/campaigns/:campaignId Update Campaign
    * @apiName Update Campaign
@@ -363,6 +430,7 @@ function campaignsRouter (app) {
       res.json({ error: 'Error deleting campaign.' })
     })
   })
+
 }
 
 module.exports = campaignsRouter

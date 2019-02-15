@@ -5,6 +5,7 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const { appKeyCheck, fetchAllPlayers, fetchPlayer, lookupPhone } = require('../middlewares');
 const Player = sequelize.import('../models/player');
+const Campaign = sequelize.import('../models/campaign');
 
 function playersRouter (app) {
 
@@ -142,6 +143,7 @@ function playersRouter (app) {
       return res.json({ error: 'Error updating player info' })
     })
   })
+
 }
 
 module.exports = playersRouter
