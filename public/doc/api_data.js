@@ -780,7 +780,7 @@ define({ "api": [
   },
   {
     "type": "get",
-    "url": "/api/players",
+    "url": "/api/players/:playerId",
     "title": "Fetch Player",
     "name": "Fetch_Player",
     "group": "Players",
