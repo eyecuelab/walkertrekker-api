@@ -8,7 +8,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\", \"startNow\": true } }' https://walkertrekker.herokuapp.com/api/campaigns",
+        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\" } }' https://walkertrekker.herokuapp.com/api/campaigns",
         "type": "curl"
       }
     ],
@@ -584,6 +584,134 @@ define({ "api": [
         {
           "title": "Success-Response:",
           "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\",\n     \"startDate\": \"2019-02-08\",\n     \"endDate\": \"2019-03-10\",\n     \"currentDay\": 0,\n     \"length\": \"30\",\n     \"difficultyLevel\": \"hard\",\n     \"randomEvents\": \"low\",\n     \"numPlayers\": 2,\n     \"stepTargets\": [\n         6000,\n         0, ...\n     ],\n     \"inventory\": {\n         \"foodItems\": 0,\n         \"weaponItems\": 0,\n         \"medicineItems\": 0\n     },\n     \"players\": [...]\n }",
+          "type": "json"
+        }
+      ]
+    },
+    "version": "0.0.0",
+    "filename": "app/routes/campaigns.js",
+    "groupTitle": "Campaigns"
+  },
+  {
+    "type": "patch",
+    "url": "/api/campaigns/start/:campaignId",
+    "title": "Start Campaign",
+    "name": "Start_Campaign",
+    "group": "Campaigns",
+    "examples": [
+      {
+        "title": "Example usage:",
+        "content": "curl -X PATCH -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"startNow\": true }' https://walkertrekker.herokuapp.com/api/campaigns/start/9801ce7c-ad31-4c7e-ab91-fe53e65642c5",
+        "type": "curl"
+      }
+    ],
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "id",
+            "description": "<p>Campaign UUID</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "startDate",
+            "description": "<p>First day of campaign (not necessarily createdAt date)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Date",
+            "optional": false,
+            "field": "endDate",
+            "description": "<p>Last day of campaign</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer",
+            "optional": false,
+            "field": "currentDay",
+            "description": "<p>Current step of campaign (default: 0)</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "length",
+            "description": "<p>'15', '30', '90'</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "difficultyLevel",
+            "description": "<p>'easy', 'hard', 'xtreme'</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "randomEvents",
+            "description": "<p>'low', 'mid', 'high'</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer",
+            "optional": false,
+            "field": "numPlayers",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer[]",
+            "optional": false,
+            "field": "stepTargets",
+            "description": "<p>array of steps each player needs to complete per day</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object",
+            "optional": false,
+            "field": "inventory",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer",
+            "optional": false,
+            "field": "inventory.foodItems",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer",
+            "optional": false,
+            "field": "inventory.medicineItems",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "Integer",
+            "optional": false,
+            "field": "inventory.weaponItems",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "Player[]",
+            "optional": false,
+            "field": "players",
+            "description": "<p>array of player instances associated with this game (default to [] on creation)</p>"
+          }
+        ]
+      },
+      "examples": [
+        {
+          "title": "Success-Response:",
+          "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\",\n     \"startDate\": \"2019-02-08\",\n     \"endDate\": \"2019-03-10\",\n     \"currentDay\": 0,\n     \"length\": \"30\",\n     \"difficultyLevel\": \"hard\",\n     \"randomEvents\": \"low\",\n     \"numPlayers\": 0,\n     \"stepTargets\": [\n         6000,\n         0, ...\n     ],\n     \"inventory\": {\n         \"foodItems\": 0,\n         \"weaponItems\": 0,\n         \"medicineItems\": 0\n     },\n     \"players\": [...]\n }",
           "type": "json"
         }
       ]

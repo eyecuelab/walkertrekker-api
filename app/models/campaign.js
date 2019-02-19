@@ -75,7 +75,7 @@ function CampaignModel (sequelize, DataTypes) {
     console.log(`--------------sending--------------`)
     console.log(`to: ${number}`)
     console.log(`message: ${msg}`)
-    console.log(`-------------- --------------`)
+    console.log(`-----------------------------------`)
     client.messages.create({
       body: msg,
       to: number,

@@ -74,7 +74,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low", "startNow": true } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low" } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -116,24 +116,13 @@ function campaignsRouter (app) {
   */
   app.post('/api/campaigns/', appKeyCheck, function(req, res) {
     co(function * () {
-      const params = req.body.params
-      const len = parseInt(params.campaignLength)
       let stepTargets = [];
       for (let i = 0; i < len; i++) {stepTargets[i] = 0}
       if (params.difficultyLevel == 'easy') {stepTargets[0] = 2000} // assuming 1 mile - 2000 steps
       else if (params.difficultyLevel == 'hard') {stepTargets[0] = 6000}
       else {stepTargets[0] = 10000}
-      const startDate = new Date();
-      startDate.setHours(0,0,0,0);
-      if (!params.startNow) startDate.setDate(startDate.getDate() + 1);
-      const endDate = new Date();
-      endDate.setDate(startDate.getDate() + len-1);
-      endDate.setHours(0,0,0,0)
-
       const newCampaign = Campaign.build({
         id: uuid.v4(),
-        startDate,
-        endDate,
         currentDay: 0,
         length: params.campaignLength,
         difficultyLevel: params.difficultyLevel,
@@ -292,6 +281,79 @@ function campaignsRouter (app) {
   })
 
   /**
+   * @api {patch} /api/campaigns/start/:campaignId Start Campaign
+   * @apiName Start Campaign
+   * @apiGroup Campaigns
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "startNow": true }' https://walkertrekker.herokuapp.com/api/campaigns/start/9801ce7c-ad31-4c7e-ab91-fe53e65642c5
+   *
+   * @apiSuccess {String} id Campaign UUID
+   * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
+   * @apiSuccess {Date} endDate Last day of campaign
+   * @apiSuccess {Integer} currentDay Current step of campaign (default: 0)
+   * @apiSuccess {String} length '15', '30', '90'
+   * @apiSuccess {String} difficultyLevel 'easy', 'hard', 'xtreme'
+   * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
+   * @apiSuccess {Integer} numPlayers
+   * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
+   * @apiSuccess {Object} inventory
+   * @apiSuccess {Integer} inventory.foodItems
+   * @apiSuccess {Integer} inventory.medicineItems
+   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   {
+       "id": "9801ce7c-ad31-4c7e-ab91-fe53e65642c5",
+       "startDate": "2019-02-08",
+       "endDate": "2019-03-10",
+       "currentDay": 0,
+       "length": "30",
+       "difficultyLevel": "hard",
+       "randomEvents": "low",
+       "numPlayers": 0,
+       "stepTargets": [
+           6000,
+           0, ...
+       ],
+       "inventory": {
+           "foodItems": 0,
+           "weaponItems": 0,
+           "medicineItems": 0
+       },
+       "players": [...]
+   }
+  */
+  app.patch('/api/campaigns/start/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
+    co(async function() {
+      let campaign = req.campaign
+      const len = parseInt(campaign.length)
+      const startDate = new Date();
+      startDate.setHours(0,0,0,0);
+      if (!req.body.startNow) { startDate.setDate(startDate.getDate() + 1); }
+      const endDate = new Date();
+      endDate.setDate(startDate.getDate() + len-1);
+      endDate.setHours(0,0,0,0)
+      await campaign.update({
+        startDate,
+        endDate,
+      })
+      let players = await campaign.getPlayers()
+      for (let player of players) {
+        await player.update({ invited: [] })
+      }
+      let json = await campaign.toJson()
+      return res.json(json)
+    }).catch(function(err) {
+      console.log(err)
+      return res.json({ error: 'Error starting game.' })
+    })
+  })
+
+
+  /**
    * @api {patch} /api/campaigns/:campaignId Update Campaign
    * @apiName Update Campaign
    * @apiGroup Campaigns
@@ -376,8 +438,16 @@ function campaignsRouter (app) {
         return res.json(res.error)
       }
       let campaign = req.campaign
+      console.log('req.player: ', req.player.displayName)
+      const contactAlreadyInvited = (req.player.invited.indexOf(req.phoneNumber) > -1)
+      console.log('contactAlreadyInvited: ', contactAlreadyInvited)
+      if (contactAlreadyInvited) {
+        return res.json({ error: 'That contact has already received an invitation from this player to join a campaign and cannot be invited again.'})
+      }
       const link = req.body.link ? req.body.link : `walkertrekker://invite?campaignId=${campaign.id}`
       campaign.sendInvite(req.player, req.phoneNumber, link)
+      const newInvited = [...req.player.invited, req.phoneNumber]
+      req.player.update({ invited: newInvited })
       return res.json({ msg: `SMS invite sent to phone number ${req.phoneNumber}.` })
     }).catch(function (err) {
       console.log(err)

@@ -19,13 +19,7 @@ function appKeyCheck (req, res, done) {
 
 function fetchPlayer (req, res, done) {
   Player.findOne({
-    where: {
-      [op.or]: [
-        {displayName: req.body.displayName},
-        {id: req.body.playerId},
-        {phoneNumber: req.body.phoneNumber}
-      ]
-    }
+    where: { id: req.body.playerId }
   })
   .then(function(player) {
     if (player == null) {
