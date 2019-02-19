@@ -17,11 +17,12 @@ var port = process.env.PORT || 5000
 var server = http.Server(app)
 var io = require('socket.io')(server)
 
+const { connectionCb } = require('./app/socket')
+
 // require('./config/passport')(passport)
 
-io.on('connection', (client) => {
-  console.log('client connected.')
-  client.on('disconnect', () => console.log('client disconnected.'))
+io.on('connection', (socket) => {
+  connectionCb(socket)
 });
 
 app.use(function(req, res, done){

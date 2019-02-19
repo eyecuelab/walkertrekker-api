@@ -406,6 +406,7 @@ function campaignsRouter (app) {
     co(function*() {
       let campaign = req.campaign
       campaign.update(req.body.campaignUpdate)
+      res.io.in(campaign.id).emit('log', 'hey there bozo your game changed.')
       let json = yield campaign.toJson()
       return res.json(json)
     }).catch(function (err) {
