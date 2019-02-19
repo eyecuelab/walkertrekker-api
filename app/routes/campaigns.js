@@ -117,6 +117,8 @@ function campaignsRouter (app) {
   app.post('/api/campaigns/', appKeyCheck, function(req, res) {
     co(function * () {
       let stepTargets = [];
+      const params = req.body.params;
+      const len = parseInt(params.campaignLength);
       for (let i = 0; i < len; i++) {stepTargets[i] = 0}
       if (params.difficultyLevel == 'easy') {stepTargets[0] = 2000} // assuming 1 mile - 2000 steps
       else if (params.difficultyLevel == 'hard') {stepTargets[0] = 6000}
