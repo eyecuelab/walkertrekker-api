@@ -19,13 +19,10 @@ var io = require('socket.io')(server)
 
 // require('./config/passport')(passport)
 
-io.on('connection', function(socket) {
-  // once a client has connected,
-  // we expect to get a ping from them saying which game they want to join
-  socket.on('game', function(game) {
-    socket.join(game)
-  })
-})
+io.on('connection', (client) => {
+  console.log('client connected.')
+  client.on('disconnect', () => console.log('client disconnected.'))
+});
 
 app.use(function(req, res, done){
   res.io = io
@@ -69,7 +66,7 @@ app.set('port', port);
  * Listen on provided port, on all network interfaces.
  */
 
-server.listen(port);
+server.listen(port, () => console.log(`Listening on port ${port}`));
 server.on('error', onError);
 server.on('listening', onListening);
 
