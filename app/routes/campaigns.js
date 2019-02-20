@@ -208,6 +208,7 @@ function campaignsRouter (app) {
       await player.save()
       await campaign.save()
       let json = await campaign.toJson()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
@@ -261,7 +262,6 @@ function campaignsRouter (app) {
        "players": [...]
    }
   */
-
   app.patch('/api/campaigns/leave/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function(req, res) {
     co(async function() {
       let player = req.player
@@ -278,6 +278,7 @@ function campaignsRouter (app) {
         numPlayers
       })
       let json = await campaign.toJson()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
       return res.json(json)
     })
   })
@@ -347,13 +348,14 @@ function campaignsRouter (app) {
         await player.update({ invited: [] })
       }
       let json = await campaign.toJson()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
+      res.io.in(campaign.id).emit('campaignStarted', json)
       return res.json(json)
     }).catch(function(err) {
       console.log(err)
       return res.json({ error: 'Error starting game.' })
     })
   })
-
 
   /**
    * @api {patch} /api/campaigns/:campaignId Update Campaign
@@ -401,13 +403,12 @@ function campaignsRouter (app) {
        "players": [...]
    }
   */
-
   app.patch('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(function*() {
       let campaign = req.campaign
       campaign.update(req.body.campaignUpdate)
-      res.io.in(campaign.id).emit('log', 'hey there bozo your game changed.')
       let json = yield campaign.toJson()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
@@ -431,7 +432,6 @@ function campaignsRouter (app) {
      "msg": "SMS invite sent to phone number +15035558989"
    }
   */
-
   app.post('/api/campaigns/invite/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
     co(function*() {
       if (req.player == 'No player found') {
@@ -441,9 +441,7 @@ function campaignsRouter (app) {
         return res.json(res.error)
       }
       let campaign = req.campaign
-      console.log('req.player: ', req.player.displayName)
       const contactAlreadyInvited = (req.player.invited.indexOf(req.phoneNumber) > -1)
-      console.log('contactAlreadyInvited: ', contactAlreadyInvited)
       if (contactAlreadyInvited) {
         return res.json({ error: 'That contact has already received an invitation from this player to join a campaign and cannot be invited again.'})
       }
@@ -476,7 +474,6 @@ function campaignsRouter (app) {
      "players": [...]
    }
   */
-
   app.delete('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(function*() {
       let campaign = req.campaign
@@ -498,6 +495,8 @@ function campaignsRouter (app) {
         json.players.push(playerData)
       }
       campaign.destroy()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
+      res.io.in(campaign.id).emit('campaignDeleted', json)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)

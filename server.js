@@ -19,8 +19,6 @@ var io = require('socket.io')(server)
 
 const { connectionCb } = require('./app/socket')
 
-// require('./config/passport')(passport)
-
 io.on('connection', (socket) => {
   connectionCb(socket)
 });
