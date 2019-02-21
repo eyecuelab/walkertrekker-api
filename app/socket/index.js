@@ -21,7 +21,7 @@ const registerEventListenersOnConnect = (socket) => {
   socket.on('connectToCampaign', async (campaignId) => {
     let campaign = await Campaign.findOne({ where: { id: campaignId } })
     if (campaign) {
-      socket.join(campaigId)
+      socket.join(campaignId)
       socket.emit('log', `connected to updates to campaign ${campaignId}`)
     } else {
       socket.emit('log', `no campaign found with the specified campaignId`)
