@@ -15,12 +15,15 @@ var http = require('http');
 var app = express()
 var port = process.env.PORT || 5000
 var server = http.Server(app)
-var io = require('socket.io')(server)
+var io = require('socket.io')(server, {
+  pingTimeout: 30000,
+  pingInterval: 30000
+})
 
-const { connectionCb } = require('./app/socket')
+const { registerEventListenersOnConnect } = require('./app/socket')
 
 io.on('connection', (socket) => {
-  connectionCb(socket)
+  registerEventListenersOnConnect(socket)
 });
 
 app.use(function(req, res, done){

@@ -1,11 +1,10 @@
-
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
-const connectionCb = (socket) => {
-  console.log('client connected')
+const registerEventListenersOnConnect = (socket) => {
+  console.log(`client connected, socket.id = ${socket.id}`)
   socket.on('initPlayerInfo', async (playerId) => {
     socket.join(playerId)
     console.log(`findPlayerInfo event received, fetching data for player ${playerId}`)
@@ -18,7 +17,7 @@ const connectionCb = (socket) => {
   })
   socket.on('initCampaignInfo', async (campaignId) => {
     socket.join(campaignId)
-    console.log(`findCampaignInfo even received, fetching data for campaign ${campaignId}`)
+    console.log(`findCampaignInfo event received, fetching data for campaign ${campaignId}`)
     let campaign = await Campaign.findOne({ where: { id: campaignId } })
     let response = await campaign.toJson()
     console.log(`fetching data finished, result:`)
@@ -26,9 +25,10 @@ const connectionCb = (socket) => {
     console.log(`emitting campaignInfoFound event`)
     socket.emit('sendCampaignInfo', response)
   })
-  socket.on('disconnect', () => console.log('client disconnected'))
+  socket.on('log', (msg) => console.log(msg))
+  socket.on('disconnect', () => console.log(`client disconnected, socket.id = ${socket.id}`))
 }
 
 module.exports = {
-  connectionCb,
+  registerEventListenersOnConnect,
 }
