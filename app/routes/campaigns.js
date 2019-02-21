@@ -140,42 +140,15 @@ function campaignsRouter (app) {
       })
       await newCampaign.addPlayer(player.id)
       await player.update(player.initCampaign(len))
+      let playerInfo = player.toJson()
       let json = await newCampaign.toJson()
-      res.io.in(player.id).emit('sendPlayerInfo', json)
+      res.io.in(player.id).emit('sendPlayerInfo', playerInfo)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
       res.json({ error: 'Error creating a game' })
     })
   })
-
-//   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
-//   co(async function() {
-//     let campaign = req.campaign
-//     let player = req.player
-//     if (campaign.numPlayers == 5) {
-//       return res.json({ error: `Sorry, this campaign is full.`})
-//     }
-//     campaign.addPlayer(player)
-//     campaign.numPlayers++
-//     player.inActiveGame = true
-//     player.hunger = 100
-//     player.health = 100
-//     let steps = []
-//     for (let i=0; i < parseInt(campaign.length); i++) {
-//       steps.push(0)
-//     }
-//     player.steps = steps
-//     await player.save()
-//     await campaign.save()
-//     let json = await campaign.toJson()
-//     res.io.in(campaign.id).emit('sendCampaignInfo', json)
-//     return res.json(json)
-//   }).catch(function (err) {
-//     console.log(err)
-//     res.json({ error: 'Error joining game' })
-//   })
-// })
 
   /**
    * @api {patch} /api/campaigns/join/:campaignId Join Campaign
