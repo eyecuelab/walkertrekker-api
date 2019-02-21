@@ -45,6 +45,20 @@ function PlayerModel (sequelize, DataTypes) {
     return json
   }
 
+  Player.prototype.initCampaign = function(len) {
+    let steps = [];
+    for (let i = 0; i < len; i++) {
+      steps.push(0)
+    }
+    let json = {
+      inActiveGame: true,
+      health: 100,
+      hunger: 100,
+      steps,
+    }
+    return json;
+  }
+
   return Player
 }
 

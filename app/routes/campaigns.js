@@ -114,8 +114,12 @@ function campaignsRouter (app) {
        "players": []
    }
   */
-  app.post('/api/campaigns/', appKeyCheck, function(req, res) {
-    co(function * () {
+  app.post('/api/campaigns/', appKeyCheck, fetchPlayer, function(req, res) {
+    co(async function () {
+      if (req.player == 'No player found') {
+        return res.json({ error: 'No player found with given playerId, cannot create campaign.' })
+      }
+      let player = req.player
       let stepTargets = [];
       const params = req.body.params;
       const len = parseInt(params.campaignLength);
@@ -123,24 +127,55 @@ function campaignsRouter (app) {
       if (params.difficultyLevel == 'easy') {stepTargets[0] = 2000} // assuming 1 mile - 2000 steps
       else if (params.difficultyLevel == 'hard') {stepTargets[0] = 6000}
       else {stepTargets[0] = 10000}
-      const newCampaign = Campaign.build({
+      const newCampaign = await Campaign.create({
         id: uuid.v4(),
         currentDay: 0,
         length: params.campaignLength,
         difficultyLevel: params.difficultyLevel,
         randomEvents: params.randomEvents,
-        numPlayers: 0,
+        numPlayers: 1,
         stepTargets,
-        inventory: { foodItems: 0, medicineItems: 0, weaponItems: 0 }
+        inventory: { foodItems: 0, medicineItems: 0, weaponItems: 0 },
+        host: player.id,
       })
-      let json = yield newCampaign.toJson()
-      newCampaign.save()
+      await newCampaign.addPlayer(player.id)
+      await player.update(player.initCampaign(len))
+      let json = await newCampaign.toJson()
+      res.io.in(player.id).emit('sendPlayerInfo', json)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
       res.json({ error: 'Error creating a game' })
     })
   })
+
+//   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
+//   co(async function() {
+//     let campaign = req.campaign
+//     let player = req.player
+//     if (campaign.numPlayers == 5) {
+//       return res.json({ error: `Sorry, this campaign is full.`})
+//     }
+//     campaign.addPlayer(player)
+//     campaign.numPlayers++
+//     player.inActiveGame = true
+//     player.hunger = 100
+//     player.health = 100
+//     let steps = []
+//     for (let i=0; i < parseInt(campaign.length); i++) {
+//       steps.push(0)
+//     }
+//     player.steps = steps
+//     await player.save()
+//     await campaign.save()
+//     let json = await campaign.toJson()
+//     res.io.in(campaign.id).emit('sendCampaignInfo', json)
+//     return res.json(json)
+//   }).catch(function (err) {
+//     console.log(err)
+//     res.json({ error: 'Error joining game' })
+//   })
+// })
 
   /**
    * @api {patch} /api/campaigns/join/:campaignId Join Campaign
@@ -192,20 +227,14 @@ function campaignsRouter (app) {
     co(async function() {
       let campaign = req.campaign
       let player = req.player
+      console.log(player)
+      let len = parseInt(campaign.length)
       if (campaign.numPlayers == 5) {
         return res.json({ error: `Sorry, this campaign is full.`})
       }
       campaign.addPlayer(player)
       campaign.numPlayers++
-      player.inActiveGame = true
-      player.hunger = 100
-      player.health = 100
-      let steps = []
-      for (let i=0; i < parseInt(campaign.length); i++) {
-        steps.push(0)
-      }
-      player.steps = steps
-      await player.save()
+      player.update(player.initCampaign(len))
       await campaign.save()
       let json = await campaign.toJson()
       res.io.in(campaign.id).emit('sendCampaignInfo', json)

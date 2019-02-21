@@ -41,6 +41,7 @@ function CampaignModel (sequelize, DataTypes) {
     numPlayers: DataTypes.INTEGER,
     stepTargets: DataTypes.ARRAY(DataTypes.INTEGER),
     inventory: DataTypes.JSONB,
+    host: DataTypes.STRING,
   })
 
   Campaign.hasMany(Player)
@@ -57,6 +58,7 @@ function CampaignModel (sequelize, DataTypes) {
       numPlayers: this.numPlayers,
       stepTargets: this.stepTargets,
       inventory: this.inventory,
+      host: this.host,
       players: [],
     }
 
