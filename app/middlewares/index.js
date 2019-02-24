@@ -8,6 +8,9 @@ const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
 const Twilio = require('twilio')
 const client = Twilio(twilioAccountSid, twilioAuthToken)
 
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' }).single('avatar')
+
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
 
@@ -60,12 +63,26 @@ function checkPlayerInActiveCampaign (req, res, done) {
   })
 }
 
+function getImage (req, res, done) {
+  upload(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      console.log(err)
+      res.error = 'Error in getImage'
+    } else if (err) {
+      console.log(err)
+      res.error = 'Error in getImage'
+    }
+  })
+  done()
+}
+
 module.exports = {
   appKeyCheck,
   fetchPlayer,
   fetchCampaign,
   lookupPhone,
   checkPlayerInActiveCampaign,
+  getImage,
 }
 
 // function twilioPhoneLookup (phone, cb) {

@@ -9,7 +9,7 @@ const registerEventListenersOnConnect = (socket) => {
   socket.on('disconnect', () => console.log(`client disconnected, socket.id = ${socket.id}`))
 
   socket.on('connectToPlayer', async (playerId) => {
-    console.log(`received connectToPlayer event, playernId ${playerId}`)
+    console.log(`received connectToPlayer event, playerId ${playerId}`)
     let player = await Player.findOne({ where: { id: playerId } })
     if (player) {
       socket.join(playerId)

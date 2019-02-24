@@ -2,8 +2,11 @@ const co = require('co')
 const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
+const cloudinary = require('cloudinary')
+const multer = require('multer')
+const upload = multer({ dest: 'uploads/' })
 
-const { appKeyCheck, playerLookup, fetchPlayer, lookupPhone } = require('../middlewares');
+const { appKeyCheck, playerLookup, fetchPlayer, lookupPhone, getImage } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
@@ -61,12 +64,14 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H -d '{"displayName": "Oscar Robertson", "phoneNumber": "5035558989"}' http://walkertrekker.herokuapp.com/api/players
+   *   curl -X POST -H "appkey: abc" -F displayName="Oscar Robertson" -F phoneNumber="5035558989" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name
-   * @apiSuccess {String} phoneNumber Phone Number
-   * @apiSuccess {Boolean} inActiveGame True if player is in a game
+   * @apiSuccess {String} phoneNumber Phone Number (normalized format)
+   * @apiSuccess {Boolean} inActiveGame
+   * @apiSuccess {String[]} invited
+   * @apiSuccess {String} avatar Cloudinary public_id for uploaded avatar
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -74,35 +79,42 @@ function playersRouter (app) {
        "id": "a2e8a0da-9b6a-4ead-b783-f57af591cf4a",
        "displayName": "Oscar Robertson",
        "phoneNumber": "+15035558989",
-       "inActiveGame": false
+       "inActiveGame": false,
+       "invited": [],
+       "avatar": "fdcpcusi5f5ef2bwg52x"
    }
   */
-  app.post('/api/players', appKeyCheck, fetchPlayer, lookupPhone, function(req, res) {
-    co(function * () {
+  app.post('/api/players', upload.single('avatar'), appKeyCheck, fetchPlayer, lookupPhone, async function(req, res) {
+    try {
       if (req.player !== 'No player found') {
         return res.json({ error: `Player already exists, cannot create this player.`})
       } else if (res.error) {
         return res.json(res.error)
-      } else {
-        const newPlayer = Player.build({
-          id: uuid.v4(),
-          displayName: req.body.displayName,
-          phoneNumber: req.phoneNumber,
-          inActiveGame: false,
-        })
-        newPlayer.save()
-        let json = yield newPlayer.toJson();
-        return res.json(json)
       }
-    }).catch(function(error) {
+      let playerAvatar = null;
+      if (req.file) {
+        avatarUpload = await cloudinary.uploader.upload(req.file.path)
+        playerAvatar = avatarUpload.public_id
+      }
+      const newPlayer = Player.build({
+        id: uuid.v4(),
+        displayName: req.body.displayName,
+        phoneNumber: req.phoneNumber,
+        inActiveGame: false,
+        avatar: playerAvatar
+      })
+      newPlayer.save()
+      let json = newPlayer.toJson();
+      return res.json(json)
+    } catch (error) {
       console.log(error)
       return res.json({ error: 'Error creating new player' })
-    })
+    }
   })
 
   /**
-   * @api {patch} /api/players Update Player
-   * @apiName Update Player
+   * @api {post} /api/players/avatar Update Player
+   * @apiName Post an avatar
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
@@ -137,6 +149,7 @@ function playersRouter (app) {
       let player = req.player
       player.update(req.body.playerUpdate)
       let json = player.toJson()
+      res.io.in(player.id).emit('sendPlayerInfo', json)
       return res.json(json)
     }).catch(function(err) {
       console.log(err)
@@ -144,6 +157,21 @@ function playersRouter (app) {
     })
   })
 
+
+  app.post('/api/players/avatar', appKeyCheck, upload.single('avatar'), async function(req, res) {
+    try {
+      let player = await Player.findOne({ where: { id: req.body.playerId }})
+      let playerAvatar = await cloudinary.uploader.upload(req.file.path)
+      player.avatar = playerAvatar.public_id
+      player.save()
+      const json = player.toJson()
+      return res.json(json)
+    }
+    catch (err) {
+      console.log(err)
+      return res.json({ error: 'Error uploading image' })
+    }
+  })
 }
 
 module.exports = playersRouter

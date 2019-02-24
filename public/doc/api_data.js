@@ -857,7 +857,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -H -d '{\"displayName\": \"Oscar Robertson\", \"phoneNumber\": \"5035558989\"}' http://walkertrekker.herokuapp.com/api/players",
+        "content": "curl -X POST -H \"appkey: abc\" -F displayName=\"Oscar Robertson\" -F phoneNumber=\"5035558989\" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players",
         "type": "curl"
       }
     ],
@@ -883,21 +883,35 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "phoneNumber",
-            "description": "<p>Phone Number</p>"
+            "description": "<p>Phone Number (normalized format)</p>"
           },
           {
             "group": "Success 200",
             "type": "Boolean",
             "optional": false,
             "field": "inActiveGame",
-            "description": "<p>True if player is in a game</p>"
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "String[]",
+            "optional": false,
+            "field": "invited",
+            "description": ""
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "avatar",
+            "description": "<p>Cloudinary public_id for uploaded avatar</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"a2e8a0da-9b6a-4ead-b783-f57af591cf4a\",\n     \"displayName\": \"Oscar Robertson\",\n     \"phoneNumber\": \"+15035558989\",\n     \"inActiveGame\": false\n }",
+          "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"a2e8a0da-9b6a-4ead-b783-f57af591cf4a\",\n     \"displayName\": \"Oscar Robertson\",\n     \"phoneNumber\": \"+15035558989\",\n     \"inActiveGame\": false,\n     \"invited\": [],\n     \"avatar\": \"fdcpcusi5f5ef2bwg52x\"\n }",
           "type": "json"
         }
       ]
@@ -993,10 +1007,10 @@ define({ "api": [
     "groupTitle": "Players"
   },
   {
-    "type": "patch",
-    "url": "/api/players",
+    "type": "post",
+    "url": "/api/players/avatar",
     "title": "Update Player",
-    "name": "Update_Player",
+    "name": "Post_an_avatar",
     "group": "Players",
     "examples": [
       {

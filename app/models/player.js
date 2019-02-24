@@ -27,7 +27,8 @@ function PlayerModel (sequelize, DataTypes) {
     invited: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
-    }
+    },
+    avatar: DataTypes.STRING,
   })
 
   Player.prototype.toJson = function() {
@@ -41,6 +42,7 @@ function PlayerModel (sequelize, DataTypes) {
       hunger: this.hunger,
       steps: this.steps,
       invited: this.invited,
+      avatar: this.avatar
     }
     return json
   }
