@@ -64,7 +64,7 @@ function playersRouter (app) {
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "appkey: abc" -F displayName="Oscar Robertson" -F phoneNumber="5035558989" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players
+   *   curl -X POST -H "Content-Type: multipart/form-data" -H "appkey: abc" -F displayName="Oscar Robertson" -F phoneNumber="5035558989" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players
    *
    * @apiSuccess {String} id Player UUID
    * @apiSuccess {String} displayName Player Name

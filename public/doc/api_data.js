@@ -864,7 +864,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X POST -H \"appkey: abc\" -F displayName=\"Oscar Robertson\" -F phoneNumber=\"5035558989\" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players",
+        "content": "curl -X POST -H \"Content-Type: multipart/form-data\" -H \"appkey: abc\" -F displayName=\"Oscar Robertson\" -F phoneNumber=\"5035558989\" -F avatar=yourFileHere http://walkertrekker.herokuapp.com/api/players",
         "type": "curl"
       }
     ],
