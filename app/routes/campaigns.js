@@ -74,7 +74,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low" } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa" "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low" } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -89,6 +89,7 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} inventory.foodItems
    * @apiSuccess {Integer} inventory.medicineItems
    * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
@@ -111,7 +112,13 @@ function campaignsRouter (app) {
            "weaponItems": 0,
            "medicineItems": 0
        },
-       "players": []
+       "players": [
+          {
+            "id": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa",
+            ...
+          },
+       ],
+       "host": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa"
    }
   */
   app.post('/api/campaigns/', appKeyCheck, fetchPlayer, function(req, res) {

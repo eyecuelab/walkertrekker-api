@@ -8,7 +8,7 @@ define({ "api": [
     "examples": [
       {
         "title": "Example usage:",
-        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\" } }' https://walkertrekker.herokuapp.com/api/campaigns",
+        "content": "curl -X POST -H \"Content-type: application/json\" -H \"appkey: abc\" -d '{ \"playerId\": \"c1e1ee53-ae51-423c-b07d-9a98f74f1cfa\" \"params\": { \"campaignLength\": \"30\", \"difficultyLevel\": \"hard\", \"randomEvents\": \"low\" } }' https://walkertrekker.herokuapp.com/api/campaigns",
         "type": "curl"
       }
     ],
@@ -108,6 +108,13 @@ define({ "api": [
           },
           {
             "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "host",
+            "description": "<p>PlayerId of the player that started the campaign</p>"
+          },
+          {
+            "group": "Success 200",
             "type": "Player[]",
             "optional": false,
             "field": "players",
@@ -118,7 +125,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success-Response:",
-          "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\",\n     \"startDate\": \"2019-02-08\",\n     \"endDate\": \"2019-03-10\",\n     \"currentDay\": 0,\n     \"length\": \"30\",\n     \"difficultyLevel\": \"hard\",\n     \"randomEvents\": \"low\",\n     \"numPlayers\": 0,\n     \"stepTargets\": [\n         6000,\n         0, ...\n     ],\n     \"inventory\": {\n         \"foodItems\": 0,\n         \"weaponItems\": 0,\n         \"medicineItems\": 0\n     },\n     \"players\": []\n }",
+          "content": "HTTP/1.1 200 OK\n {\n     \"id\": \"9801ce7c-ad31-4c7e-ab91-fe53e65642c5\",\n     \"startDate\": \"2019-02-08\",\n     \"endDate\": \"2019-03-10\",\n     \"currentDay\": 0,\n     \"length\": \"30\",\n     \"difficultyLevel\": \"hard\",\n     \"randomEvents\": \"low\",\n     \"numPlayers\": 0,\n     \"stepTargets\": [\n         6000,\n         0, ...\n     ],\n     \"inventory\": {\n         \"foodItems\": 0,\n         \"weaponItems\": 0,\n         \"medicineItems\": 0\n     },\n     \"players\": [\n        {\n          \"id\": \"c1e1ee53-ae51-423c-b07d-9a98f74f1cfa\",\n          ...\n        },\n     ],\n     \"host\": \"c1e1ee53-ae51-423c-b07d-9a98f74f1cfa\"\n }",
           "type": "json"
         }
       ]
