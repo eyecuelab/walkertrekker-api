@@ -74,7 +74,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa" "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low" } }' https://walkertrekker.herokuapp.com/api/campaigns
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "playerId": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa", "timezone": -8, "params": { "campaignLength": "30", "difficultyLevel": "hard", "randomEvents": "low" } }' https://walkertrekker.herokuapp.com/api/campaigns
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -144,6 +144,7 @@ function campaignsRouter (app) {
         stepTargets,
         inventory: { foodItems: 0, medicineItems: 0, weaponItems: 0 },
         host: player.id,
+        timezone: req.body.timezone,
       })
       await newCampaign.addPlayer(player.id)
       await player.update(player.initCampaign(len))
@@ -343,11 +344,11 @@ function campaignsRouter (app) {
       let campaign = req.campaign
       const len = parseInt(campaign.length)
       const startDate = new Date();
-      startDate.setHours(0,0,0,0);
+      startDate.setHours(0,1,0,0);
       if (!req.body.startNow) { startDate.setDate(startDate.getDate() + 1); }
       const endDate = new Date();
-      endDate.setDate(startDate.getDate() + len-1);
-      endDate.setHours(0,0,0,0)
+      endDate.setDate(startDate.getDate() + len);
+      endDate.setHours(0,1,0,0)
       await campaign.update({
         startDate,
         endDate,

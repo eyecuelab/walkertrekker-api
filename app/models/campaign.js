@@ -42,6 +42,13 @@ function CampaignModel (sequelize, DataTypes) {
     stepTargets: DataTypes.ARRAY(DataTypes.INTEGER),
     inventory: DataTypes.JSONB,
     host: DataTypes.STRING,
+    timezone: {
+      type: DataTypes.INTEGER,
+      validate: {
+        min: -12,
+        max: 12
+      }
+    }
   })
 
   Campaign.hasMany(Player)
@@ -59,6 +66,7 @@ function CampaignModel (sequelize, DataTypes) {
       stepTargets: this.stepTargets,
       inventory: this.inventory,
       host: this.host,
+      timezone: this.timezone,
       players: [],
     }
 
