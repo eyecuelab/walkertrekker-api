@@ -355,7 +355,7 @@ function campaignsRouter (app) {
       })
       let players = await campaign.getPlayers()
       for (let player of players) {
-        await player.update({ invited: [] })
+        await player.update({ invited: [], stepTargets: campaign.stepTargets })
       }
       let json = await campaign.toJson()
       res.io.in(campaign.id).emit('sendCampaignInfo', json)

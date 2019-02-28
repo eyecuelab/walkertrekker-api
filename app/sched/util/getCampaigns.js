@@ -29,4 +29,22 @@ async function getActiveCampaignsAtLocalTime(timeTarget = 0) {
   return campaigns
 }
 
-module.exports = getActiveCampaignsAtLocalTime
+async function getAllActiveCampaigns() {
+  const now = new Date()
+  const campaigns = await Campaign.findAll({
+    where: {
+      startDate: {
+        [Op.lte]: now
+      },
+      endDate: {
+        [Op.gt]: now
+      }
+    }
+  })
+  return campaigns
+}
+
+module.exports = {
+  getActiveCampaignsAtLocalTime,
+  getAllActiveCampaigns,
+}

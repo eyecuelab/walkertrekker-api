@@ -24,6 +24,7 @@ function PlayerModel (sequelize, DataTypes) {
     health: DataTypes.INTEGER,
     hunger: DataTypes.INTEGER,
     steps: DataTypes.ARRAY(DataTypes.INTEGER),
+    stepTargets: DataTypes.ARRAY(DataTypes.INTEGER),
     invited: {
       type: DataTypes.ARRAY(DataTypes.STRING),
       defaultValue: [],
@@ -41,6 +42,7 @@ function PlayerModel (sequelize, DataTypes) {
       health: this.health,
       hunger: this.hunger,
       steps: this.steps,
+      stepTargets: this.stepTargets,
       invited: this.invited,
       avatar: this.avatar
     }
@@ -49,14 +51,17 @@ function PlayerModel (sequelize, DataTypes) {
 
   Player.prototype.initCampaign = function(len) {
     let steps = [];
+    let stepTargets = [];
     for (let i = 0; i < len; i++) {
       steps.push(0)
+      stepTargets.push(0)
     }
     let json = {
       inActiveGame: true,
       health: 100,
       hunger: 100,
       steps,
+      stepTargets
     }
     return json;
   }
