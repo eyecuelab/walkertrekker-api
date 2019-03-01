@@ -22,9 +22,10 @@ var io = require('socket.io')(server, {
 
 const { registerEventListenersOnConnect } = require('./app/socket')
 
-io.on('connection', (socket) => {
-  registerEventListenersOnConnect(socket)
-});
+io.on('connection', registerEventListenersOnConnect)
+io.on('connect_error', (error) => {
+  console.log(error)
+})
 
 app.use(function(req, res, done){
   res.io = io
@@ -131,3 +132,5 @@ function onListening() {
 //   console.log("** File Upload (Promise)");
 //   if (err){ console.warn(err);}
 // });
+
+module.exports = io

@@ -1,7 +1,18 @@
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
+let endpoint = process.env.NODE_ENV == 'development' ? 'http://10.1.10.217:5000' : 'walkertrekker.herokuapp.com'
+const io = require('socket.io-client')
+const client = io(endpoint, {
+  transports: ['websocket']
+})
 
 async function endOfDayUpdate() {
-
+  client.on('connect', () => {
+    console.log('connected')
+    // client.emit('ding')
+    // client.on('dong', () => console.log('dong!'))
+    client.on('disconnect', () => console.log('disconnected'))
+  })
+  await client.connect()
   // get all active campaigns for which the local time is 8pm
   const campaigns = await getActiveCampaignsAtLocalTime(20)
   // get all active campaigns (mainly for testing purposes)
@@ -36,6 +47,7 @@ async function endOfDayUpdate() {
     console.log(json)
   }
   console.log(`${campaigns.length} campaigns updated: `)
+  client.disconnect()
   process.exit(0)
 }
 
