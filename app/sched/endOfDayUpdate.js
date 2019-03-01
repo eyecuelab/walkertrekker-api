@@ -1,13 +1,19 @@
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
 
 async function endOfDayUpdate() {
+
   // get all active campaigns for which the local time is 8pm
   const campaigns = await getActiveCampaignsAtLocalTime(20)
   // get all active campaigns (mainly for testing purposes)
   // const campaigns = await getAllActiveCampaigns()
   for (let campaign of campaigns) {
-    let players = await campaign.getPlayers()
+    // log campaign state before update
+    let json = await campaign.toJson()
+    console.log(`Campaign ID: ${campaign.id}`)
+    console.log(`Campaign state before update: `)
+    console.log(json)
 
+    let players = await campaign.getPlayers()
     const playersHitTargets = checkPlayerTargets(players, campaign)
 
     if (!playersHitTargets) {
@@ -24,11 +30,12 @@ async function endOfDayUpdate() {
     }
     await campaign.save()
 
+    // log campaign state after update
+    json = await campaign.toJson()
+    console.log('Campaign state after update: ')
+    console.log(json)
   }
   console.log(`${campaigns.length} campaigns updated: `)
-  for (let campaign of campaigns) {
-    console.log(campaign.id)
-  }
   process.exit(0)
 }
 

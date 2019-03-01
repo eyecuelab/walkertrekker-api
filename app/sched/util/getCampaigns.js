@@ -12,7 +12,7 @@ async function getActiveCampaignsAtLocalTime(timeTarget = 0) {
   // we call getActiveCampaignsAtLocalTime(0) at 08:00 UTC, should return all active campaigns in timezone UTC-08:00
   const now = new Date()
   const hour = now.getUTCHours()
-  const timezone = timeTarget - hour
+  let timezone = timeTarget - hour
   if (timezone < -12) { timezone = timezone + 24 }
   if (timezone > 12) { timezone = timezone - 24 }
   const campaigns = await Campaign.findAll({
