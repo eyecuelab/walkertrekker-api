@@ -22,10 +22,9 @@ var io = require('socket.io')(server, {
 
 const { registerEventListenersOnConnect } = require('./app/socket')
 
-io.on('connection', registerEventListenersOnConnect)
-io.on('connect_error', (error) => {
-  console.log(error)
-})
+io.on('connection', (socket) => {
+  registerEventListenersOnConnect(socket)
+});
 
 app.use(function(req, res, done){
   res.io = io

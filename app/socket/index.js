@@ -1,4 +1,3 @@
-
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Player = sequelize.import('../models/player');
@@ -30,6 +29,8 @@ const registerEventListenersOnConnect = (socket) => {
       socket.emit('log', `msg from server: no campaign found with the specified campaignId`)
     }
   })
+
+  socket.on('endOfDayCampaignUpdate', () => console.log('recieved endOfDayCampaignUpdate event'))
 }
 
 module.exports = {

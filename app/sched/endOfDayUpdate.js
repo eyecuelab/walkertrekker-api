@@ -1,18 +1,13 @@
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
-let endpoint = process.env.NODE_ENV == 'development' ? 'http://10.1.10.217:5000' : 'walkertrekker.herokuapp.com'
+// const endpoint = process.env.SOCKET_CLIENT_LOCAL
+// const endpoint = process.env.SOCKET_CLIENT_REMOTE
 const io = require('socket.io-client')
-const client = io(endpoint, {
-  transports: ['websocket']
-})
+const client = io('walkertrekker.herokuapp.com')
 
 async function endOfDayUpdate() {
-  client.on('connect', () => {
-    console.log('connected')
-    // client.emit('ding')
-    // client.on('dong', () => console.log('dong!'))
-    client.on('disconnect', () => console.log('disconnected'))
-  })
-  await client.connect()
+  client.connect()
+  client.on('connect', () => console.log('connected'))
+  client.emit('log', 'log this, babyyyyyy')
   // get all active campaigns for which the local time is 8pm
   const campaigns = await getActiveCampaignsAtLocalTime(20)
   // get all active campaigns (mainly for testing purposes)
@@ -38,9 +33,11 @@ async function endOfDayUpdate() {
     // save changes to database
     for (let player of players) {
       await player.save()
+      let playerJson = player.toJson()
     }
     await campaign.save()
-
+    // client.emit('endOfDayCampaignUpdate')
+    
     // log campaign state after update
     json = await campaign.toJson()
     console.log('Campaign state after update: ')
@@ -63,17 +60,18 @@ function checkPlayerTargets(players, campaign) {
 }
 
 function resolveDamage(players, campaign) {
-  let day = campaign.currentDay
+  const day = campaign.currentDay
   // determine damage based on difficulty
-  let diff = campaign.difficultyLevel
-  let damageRange = []
-  if (diff == 'easy') { damageRange = [10, 20] }
-  else if (diff == 'hard') { damageRange = [15, 30] }
-  else if (diff == 'xtreme') { damageRange = [20, 40] }
+  const diff = campaign.difficultyLevel
+  const DAMAGE_RANGES = {
+    easy: [10, 20],
+    hard: [15, 30],
+    xtreme: [20, 40]
+  }
 
   // deal randomized damage to players
   for (let player of players) {
-    let damage = Math.floor( Math.random() * (damageRange[1] - damageRange[0] + 1) + damageRange[0] )
+    let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
     if (player.steps[day] < player.stepTargets[day]) {
       // do 50% additional damage to players that failed to make their step target
       damage = Math.floor(damage * 1.5)
@@ -89,16 +87,18 @@ function resolveDamage(players, campaign) {
 }
 
 function setStepTargets(players, campaign, playersHitTargets) {
-  let today = campaign.currentDay
-  let tomorrow = today + 1
+  const today = campaign.currentDay
+  const tomorrow = today + 1
   if (tomorrow == parseInt(campaign.length)) {
     return [players, campaign]
   }
-  let diff = campaign.difficultyLevel
-  let adjustment
-  if (diff == 'easy') { adjustment = 0.1 }
-  else if (diff == 'hard') { adjustment = 0.075 }
-  else if (diff == 'xtreme') { adjustment = 0.05 }
+  const diff = campaign.difficultyLevel
+  const ADJUSTMENTS = {
+    easy: 0.1,
+    hard: 0.075,
+    xtreme: 0.05
+  }
+  const adjustment = ADJUSTMENTS[diff]
 
   let groupTarget = playersHitTargets ? Math.floor(campaign.stepTargets[today] * (1 + adjustment)) : Math.floor(campaign.stepTargets[today] * (1 - adjustment))
   groupTarget = Math.max(groupTarget, 1000) // to prevent target from falling below a minimum threshold
