@@ -1,11 +1,7 @@
-const io = require('socket.io-client')
-const client = io('walkertrekker.herokuapp.com')
+const io = require('socket.io-emitter')({ host: '10.1.10.217', port: 5000 })
 
 function test() {
-  client.connect()
-  client.on('connect', () => console.log('connected'))
-  client.emit('log', 'log this, babyyyyyy')
-  client.disconnect()
+  io.emit('log', 'hey there good lookin we\'ll be back to pick you up later')
   process.exit(0)
 }
 

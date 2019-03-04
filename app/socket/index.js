@@ -17,20 +17,44 @@ const registerEventListenersOnConnect = (socket) => {
     } else {
       socket.emit('log', `msg from server: no player found with the specified playerId`)
     }
-  })
 
-  socket.on('connectToCampaign', async (campaignId) => {
-    console.log(`received connectToCampaign event, campaignId ${campaignId}`)
-    let campaign = await Campaign.findOne({ where: { id: campaignId } })
-    if (campaign) {
-      socket.join(campaignId)
-      socket.emit('log', `msg from server: connected to updates to campaign ${campaignId}`)
-    } else {
-      socket.emit('log', `msg from server: no campaign found with the specified campaignId`)
+    if (player.campaignId) {
+      let campaignId = player.campaignId
+      let campaign = await Campaign.findOne({ where: { id: campaignId } })
+      if (campaign) {
+        socket.join(campaignId)
+        socket.emit('log', `msg from server: connected to updates to campaign ${campaignId}`)
+
+        setTimeout(function() {
+          socket.emit('log', 'msg from server: just seeing if you\'re still awake.')
+        }, 30000)
+
+        const timezone = campaign.timezone
+        setTimeout(async function() {
+          const { localHour, min } = checkTime(timezone)
+          if (localHour == 20 && min == 5) {
+            console.log(`SENDING END OF DAY EVENT TO CLIENTS FOR CAMPAIGN ${campaignId}`)
+            let json = await campaign.toJson()
+            socket.emit('endOfDayCampaignUpdate', json)
+          }
+        }, 60000)
+
+      } else {
+        socket.emit('log', `msg from server: no campaign found with specified campaigId`)
+      }
     }
   })
 
-  socket.on('endOfDayCampaignUpdate', () => console.log('recieved endOfDayCampaignUpdate event'))
+}
+
+function checkTime(timezone) {
+  const now = new Date()
+  const hour = now.getUTCHours()
+  const min = now.getMinutes()
+  let localHour = hour + timezone
+  if (localHour < 0) { localHour = localHour + 24 }
+  if (localHour > 24) { localHour = localHour - 24}
+  return { localHour, min }
 }
 
 module.exports = {

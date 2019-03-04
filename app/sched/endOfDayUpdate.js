@@ -1,13 +1,14 @@
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
 // const endpoint = process.env.SOCKET_CLIENT_LOCAL
 // const endpoint = process.env.SOCKET_CLIENT_REMOTE
-const io = require('socket.io-client')
-const client = io('walkertrekker.herokuapp.com')
+// console.log(endpoint)
+// const io = require('socket.io-client')
+// const client = io(endpoint)
 
 async function endOfDayUpdate() {
-  client.connect()
-  client.on('connect', () => console.log('connected'))
-  client.emit('log', 'log this, babyyyyyy')
+  // client.connect()
+  // client.on('connect', () => console.log('connected'))
+  // client.emit('log', 'log this, babyyyyyy')
   // get all active campaigns for which the local time is 8pm
   const campaigns = await getActiveCampaignsAtLocalTime(20)
   // get all active campaigns (mainly for testing purposes)
@@ -37,7 +38,7 @@ async function endOfDayUpdate() {
     }
     await campaign.save()
     // client.emit('endOfDayCampaignUpdate')
-    
+
     // log campaign state after update
     json = await campaign.toJson()
     console.log('Campaign state after update: ')

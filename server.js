@@ -24,6 +24,7 @@ const { registerEventListenersOnConnect } = require('./app/socket')
 
 io.on('connection', (socket) => {
   registerEventListenersOnConnect(socket)
+  
 });
 
 app.use(function(req, res, done){

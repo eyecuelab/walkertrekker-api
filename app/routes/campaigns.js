@@ -344,7 +344,9 @@ function campaignsRouter (app) {
       let campaign = req.campaign
       const len = parseInt(campaign.length)
       const startDate = new Date();
-      startDate.setHours(0,1,0,0);
+      const hourAdjust = startDate.getUTCHours() + campaign.timezone
+      startDate.setUTCHours(hourAdjust)
+      console.log(`====== START DATE ${startDate} ======`)
       if (!req.body.startNow) { startDate.setDate(startDate.getDate() + 1); }
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + len);
@@ -499,6 +501,7 @@ function campaignsRouter (app) {
           health: null,
           hunger: null,
           steps: null,
+          stepTargets: null,
           inActiveGame: false,
         })
         let playerData = player.toJson()
@@ -514,6 +517,10 @@ function campaignsRouter (app) {
     })
   })
 
+
+  app.patch('/api/campaigns/endOfDayUpdate/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
+
+  })
 }
 
 module.exports = campaignsRouter
