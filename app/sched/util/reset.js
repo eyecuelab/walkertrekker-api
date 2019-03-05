@@ -1,4 +1,4 @@
-const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
+const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./getCampaigns')
 
 async function reset() {
   const campaigns = await getAllActiveCampaigns()
@@ -16,6 +16,9 @@ async function reset() {
     campaign.changed('stepTargets', true)
     campaign.changed('inventory', true)
     await campaign.save()
+    const json = await campaign.toJson()
+    console.log('Campaign state after reset: ')
+    console.log(json)
   }
   process.exit(0)
 }

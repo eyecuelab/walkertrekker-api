@@ -1,34 +1,49 @@
+require('dotenv').config()
+
+const { Map } = require('immutable')
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
-// const endpoint = process.env.SOCKET_CLIENT_LOCAL
-// const endpoint = process.env.SOCKET_CLIENT_REMOTE
-// console.log(endpoint)
-// const io = require('socket.io-client')
-// const client = io(endpoint)
 
 async function endOfDayUpdate() {
-  // client.connect()
-  // client.on('connect', () => console.log('connected'))
-  // client.emit('log', 'log this, babyyyyyy')
+
   // get all active campaigns for which the local time is 8pm
-  const campaigns = await getActiveCampaignsAtLocalTime(20)
-  // get all active campaigns (mainly for testing purposes)
-  // const campaigns = await getAllActiveCampaigns()
+  // const campaigns = await getActiveCampaignsAtLocalTime(20)
+  // get all active campaigns (for testing purposes)
+  const campaigns = await getAllActiveCampaigns()
+
+  const updated = []
+
   for (let campaign of campaigns) {
-    // log campaign state before update
-    let json = await campaign.toJson()
+    // add id to array of campaign IDs being updated
+    const id = campaign.id
+    updated.push(id)
+
+    // duplicate campaign state, then log before update
+    let prevState = await campaign.toJson()
+    const oldInventory = Object.assign({}, prevState.inventory)
+    const oldStepTargets = [...prevState.stepTargets]
+    console.log('')
+    console.log('====================')
+    console.log('')
     console.log(`Campaign ID: ${campaign.id}`)
     console.log(`Campaign state before update: `)
-    console.log(json)
+    console.log(prevState)
+    console.log('')
+    console.log('====================')
+    console.log('')
 
+    // get players in campaign, check to see if everyone hit their step target for the day
     let players = await campaign.getPlayers()
     const playersHitTargets = checkPlayerTargets(players, campaign)
 
+    // assign damage
     if (!playersHitTargets) {
       [players, campaign] = resolveDamage(players, campaign)
     }
 
+    // set next day's step targets
     [players, campaign] = setStepTargets(players, campaign, playersHitTargets)
 
+    // roll over campaign.currentDay
     campaign = incrementCurrentDay(campaign)
 
     // save changes to database
@@ -37,15 +52,30 @@ async function endOfDayUpdate() {
       let playerJson = player.toJson()
     }
     await campaign.save()
-    // client.emit('endOfDayCampaignUpdate')
 
     // log campaign state after update
-    json = await campaign.toJson()
+    let updatedState = await campaign.toJson()
+    console.log('')
+    console.log('====================')
+    console.log('')
     console.log('Campaign state after update: ')
-    console.log(json)
+    console.log(updatedState)
+    console.log('')
+    console.log('====================')
+    console.log('')
+
+    // send old and new campaign states to API
+    console.log('Sending campaign update information to server')
+    const update = { prevState, updatedState }
+    update.prevState.inventory = oldInventory
+    update.prevState.stepTargets = oldStepTargets
+    await sendEndOfDayUpdateToAPI(id, update)
   }
-  console.log(`${campaigns.length} campaigns updated: `)
-  client.disconnect()
+
+  // final update log
+  console.log(`${updated.length} campaigns updated: `)
+  updated.forEach(id => console.log(id))
+
   process.exit(0)
 }
 
@@ -124,6 +154,30 @@ function setStepTargets(players, campaign, playersHitTargets) {
 function incrementCurrentDay(campaign) {
   campaign.currentDay++
   return campaign
+}
+
+async function sendEndOfDayUpdateToAPI(id, update) {
+  const fetch = require('node-fetch')
+  const url = process.env.ENDPOINT + `/api/campaigns/endOfDayUpdate/${id}`
+  const body = JSON.stringify(update)
+  const request = {
+    method: 'PATCH',
+    body,
+    headers: {
+      "appkey": process.env.CLIENT_APP_KEY,
+      "Content-Type": "application/json",
+    },
+  }
+
+  try {
+    const response = await fetch(url, request).then(response => response.json())
+    console.log(response)
+  }
+  catch (err) {
+    console.log('RECEIVED ERROR RESPONSE FROM SERVER')
+    console.log(err)
+  }
+
 }
 
 endOfDayUpdate()

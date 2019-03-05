@@ -346,7 +346,6 @@ function campaignsRouter (app) {
       const startDate = new Date();
       const hourAdjust = startDate.getUTCHours() + campaign.timezone
       startDate.setUTCHours(hourAdjust)
-      console.log(`====== START DATE ${startDate} ======`)
       if (!req.body.startNow) { startDate.setDate(startDate.getDate() + 1); }
       const endDate = new Date();
       endDate.setDate(startDate.getDate() + len);
@@ -518,9 +517,52 @@ function campaignsRouter (app) {
   })
 
 
-  app.patch('/api/campaigns/endOfDayUpdate/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
+  app.patch('/api/campaigns/endOfDayUpdate/:campaignId', appKeyCheck, fetchCampaign, async function(req, res) {
+    try {
+      const campaign = req.campaign
+      const prev = req.body.prevState
+      const updated = req.body.updatedState
 
+      let result = {
+        players: [],
+        inventoryDiff: {}
+      }
+      const prevDay = prev.currentDay
+      for (let player of prev.players) {
+        const prevPlayer = player
+        const filteredPlayers = updated.players.filter(player => player.id === prevPlayer.id)
+        const updatedPlayer = filteredPlayers[0]
+        const playerInfo = Object.assign({}, updatedPlayer, {
+          healthDiff: prevPlayer.health - updatedPlayer.health,
+          stepsDiff: prevPlayer.steps[prevDay] - prevPlayer.stepTargets[prevDay]
+        })
+        result.players.push(playerInfo)
+      }
+      Object.keys(prev.inventory).forEach(item => {
+        result.inventoryDiff = Object.assign({}, result.inventoryDiff, {
+          [item]: prev.inventory[item] - updated.inventory[item]
+        })
+      })
+
+      for (let player of result.players) {
+        if (player.health <= 0) {
+          console.log(`${player.displayName} died. The game is over.`)
+          const json = await campaign.toJson()
+          res.io.in(campaign.id).emit('campaignIsLost', json)
+          return res.json({ msg: `${player.displayName} died. The game is over.` })
+        }
+      }
+
+      console.log(result)
+      res.io.in(campaign.id).emit('endOfDayUpdate', result)
+      return res.json({ msg: 'Feelin fine' })
+    }
+    catch (err) {
+      console.log(err)
+      res.json({ error: 'Error in end of day update '})
+    }
   })
+
 }
 
 module.exports = campaignsRouter
