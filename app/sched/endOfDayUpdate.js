@@ -6,9 +6,9 @@ const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./uti
 async function endOfDayUpdate() {
 
   // get all active campaigns for which the local time is 8pm
-  // const campaigns = await getActiveCampaignsAtLocalTime(20)
+  const campaigns = await getActiveCampaignsAtLocalTime(20)
   // get all active campaigns (for testing purposes)
-  const campaigns = await getAllActiveCampaigns()
+  // const campaigns = await getAllActiveCampaigns()
 
   const updated = []
 
