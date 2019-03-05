@@ -1,4 +1,4 @@
-require('dotenv').config()
+// require('dotenv').config()
 
 const { Map } = require('immutable')
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
