@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./getCampaigns')
 
 async function reset() {

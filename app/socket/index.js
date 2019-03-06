@@ -29,16 +29,6 @@ const registerEventListenersOnConnect = (socket) => {
           socket.emit('log', 'msg from server: just seeing if you\'re still awake.')
         }, 30000)
 
-        const timezone = campaign.timezone
-        setTimeout(async function() {
-          const { localHour, min } = checkTime(timezone)
-          if (localHour == 20 && min == 5) {
-            console.log(`SENDING END OF DAY EVENT TO CLIENTS FOR CAMPAIGN ${campaignId}`)
-            let json = await campaign.toJson()
-            socket.emit('endOfDayCampaignUpdate', json)
-          }
-        }, 60000)
-
       } else {
         socket.emit('log', `msg from server: no campaign found with specified campaigId`)
       }

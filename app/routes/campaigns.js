@@ -532,10 +532,12 @@ function campaignsRouter (app) {
         const prevPlayer = player
         const filteredPlayers = updated.players.filter(player => player.id === prevPlayer.id)
         const updatedPlayer = filteredPlayers[0]
-        const playerInfo = Object.assign({}, updatedPlayer, {
+        const playerInfo = {
+          id: player.id,
+          displayName: player.displayName,
           healthDiff: prevPlayer.health - updatedPlayer.health,
           stepsDiff: prevPlayer.steps[prevDay] - prevPlayer.stepTargets[prevDay]
-        })
+        }
         result.players.push(playerInfo)
       }
       Object.keys(prev.inventory).forEach(item => {
@@ -548,12 +550,15 @@ function campaignsRouter (app) {
         if (player.health <= 0) {
           console.log(`${player.displayName} died. The game is over.`)
           const json = await campaign.toJson()
+          res.io.in(campaign.id).emit('log', `msg from server: ${player.displayName} died. The game is over.`)
           res.io.in(campaign.id).emit('campaignIsLost', json)
           return res.json({ msg: `${player.displayName} died. The game is over.` })
         }
       }
 
       console.log(result)
+      const json = await campaign.toJson()
+      res.io.in(campaign.id).emit('sendCampaignInfo', json)
       res.io.in(campaign.id).emit('endOfDayUpdate', result)
       return res.json({ msg: 'Feelin fine' })
     }

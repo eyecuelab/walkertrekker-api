@@ -1,14 +1,14 @@
-// require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
-const { Map } = require('immutable')
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
 
 async function endOfDayUpdate() {
 
-  // get all active campaigns for which the local time is 8pm
-  const campaigns = await getActiveCampaignsAtLocalTime(20)
-  // get all active campaigns (for testing purposes)
-  // const campaigns = await getAllActiveCampaigns()
+  const campaigns = process.env.NODE_ENV == 'production'
+    ? await getActiveCampaignsAtLocalTime(20)
+    : await getAllActiveCampaigns()
 
   const updated = []
 
