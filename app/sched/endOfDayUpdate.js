@@ -3,6 +3,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
+const { Expo } = require('expo-server-sdk')
 
 async function endOfDayUpdate() {
 
@@ -64,12 +65,65 @@ async function endOfDayUpdate() {
     console.log('====================')
     console.log('')
 
-    // send old and new campaign states to API
-    console.log('Sending campaign update information to server')
-    const update = { prevState, updatedState }
-    update.prevState.inventory = oldInventory
-    update.prevState.stepTargets = oldStepTargets
-    await sendEndOfDayUpdateToAPI(id, update)
+    let update = {
+      players: [],
+      inventoryDiff: {},
+    }
+
+    // Build update object to display on EndOfDaySummary screen in client
+    const prevDay = prevState.currentDay
+    for (let player of prevState.players) {
+      const prevPlayer = player
+      const updatedPlayer = updatedState.players.filter(player => player.id === prevPlayer.id)[0]
+      const playerInfo = {
+        id: player.id,
+        displayName: player.displayName,
+        healthDiff: prevPlayer.health - updatedPlayer.health,
+        stepsDiff: prevPlayer.steps[prevDay] - prevPlayer.stepTargets[prevDay]
+      }
+      update.players.push(playerInfo)
+    }
+    Object.keys(prevState.inventory).forEach(item => {
+      update.inventoryDiff = Object.assign({}, update.inventoryDiff, {
+        [item]: prevState.inventory[item] - updatedState.inventory[item]
+      })
+    })
+
+    // Construct messages
+    const expo = new Expo()
+    const messages = []
+    for (let player of prevState.players) {
+      if (player.pushToken) {
+        console.log(`Constructing message to send to token ${player.pushToken}`)
+        const message = {
+          to: player.pushToken,
+          sound: 'default',
+          body: `Day ${updatedState.currentDay} has come to an end. Tap to see how your group fared today.`,
+          data: {
+            type: 'endOfDayUpdate',
+            data: update
+          }
+        }
+        messages.push(message)
+      }
+    }
+
+    // send push notifications
+    let chunks = expo.chunkPushNotifications(messages);
+    console.log('chunks', chunks)
+    let tickets = [];
+    for (let chunk of chunks) {
+      try {
+        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
+        console.log('Notification sent.')
+        console.log(ticketChunk);
+        tickets.push(...ticketChunk);
+      } catch (error) {
+        console.log('Error sending notification.')
+        console.error(error);
+      }
+    }
+
   }
 
   // final update log

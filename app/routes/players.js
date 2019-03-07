@@ -101,7 +101,8 @@ function playersRouter (app) {
         displayName: req.body.displayName,
         phoneNumber: req.phoneNumber,
         inActiveGame: false,
-        avatar: playerAvatar
+        avatar: playerAvatar,
+        pushToken: req.body.pushToken,
       })
       newPlayer.save()
       let json = newPlayer.toJson();
