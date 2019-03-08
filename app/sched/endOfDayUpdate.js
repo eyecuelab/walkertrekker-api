@@ -85,9 +85,16 @@ async function endOfDayUpdate() {
     }
     Object.keys(prevState.inventory).forEach(item => {
       update.inventoryDiff = Object.assign({}, update.inventoryDiff, {
-        [item]: prevState.inventory[item] - updatedState.inventory[item]
+        [item]: prevState.inventory[item].length - updatedState.inventory[item].length
       })
     })
+
+    // log the update being sent out to players
+    console.log(`Update data sent out to players: `)
+    console.log(update)
+    console.log('')
+    console.log('====================')
+    console.log('')
 
     // Construct messages
     const expo = new Expo()
@@ -110,7 +117,6 @@ async function endOfDayUpdate() {
 
     // send push notifications
     let chunks = expo.chunkPushNotifications(messages);
-    console.log('chunks', chunks)
     let tickets = [];
     for (let chunk of chunks) {
       try {
@@ -160,9 +166,9 @@ function resolveDamage(players, campaign) {
     if (player.steps[day] < player.stepTargets[day]) {
       // do 50% additional damage to players that failed to make their step target
       damage = Math.floor(damage * 1.5)
-    } else if (campaign.inventory.weaponItems > 0) {
+    } else if (campaign.inventory.weaponItems.length > 0) {
       // players that made their step target can use a weapon (if available) to reduce their damage by half
-      campaign.inventory.weaponItems = campaign.inventory.weaponItems - 1
+      campaign.inventory.weaponItems.shift()
       campaign.changed('inventory', true)
       damage = Math.floor(damage / 2)
     }
@@ -210,28 +216,28 @@ function incrementCurrentDay(campaign) {
   return campaign
 }
 
-async function sendEndOfDayUpdateToAPI(id, update) {
-  const fetch = require('node-fetch')
-  const url = process.env.ENDPOINT + `/api/campaigns/endOfDayUpdate/${id}`
-  const body = JSON.stringify(update)
-  const request = {
-    method: 'PATCH',
-    body,
-    headers: {
-      "appkey": process.env.CLIENT_APP_KEY,
-      "Content-Type": "application/json",
-    },
-  }
-
-  try {
-    const response = await fetch(url, request).then(response => response.json())
-    console.log(response)
-  }
-  catch (err) {
-    console.log('RECEIVED ERROR RESPONSE FROM SERVER')
-    console.log(err)
-  }
-
-}
+// async function sendEndOfDayUpdateToAPI(id, update) {
+//   const fetch = require('node-fetch')
+//   const url = process.env.ENDPOINT + `/api/campaigns/endOfDayUpdate/${id}`
+//   const body = JSON.stringify(update)
+//   const request = {
+//     method: 'PATCH',
+//     body,
+//     headers: {
+//       "appkey": process.env.CLIENT_APP_KEY,
+//       "Content-Type": "application/json",
+//     },
+//   }
+//
+//   try {
+//     const response = await fetch(url, request).then(response => response.json())
+//     console.log(response)
+//   }
+//   catch (err) {
+//     console.log('RECEIVED ERROR RESPONSE FROM SERVER')
+//     console.log(err)
+//   }
+//
+// }
 
 endOfDayUpdate()

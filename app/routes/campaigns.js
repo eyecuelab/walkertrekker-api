@@ -27,9 +27,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
@@ -48,9 +48,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 0,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [],
+           "weaponItems": [],
+           "medicineItems": []
        },
        "players": []
    }
@@ -86,9 +86,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {String} host PlayerId of the player that started the campaign
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
@@ -108,9 +108,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 0,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [],
+           "weaponItems": [],
+           "medicineItems": []
        },
        "players": [
           {
@@ -142,7 +142,7 @@ function campaignsRouter (app) {
         randomEvents: params.randomEvents,
         numPlayers: 1,
         stepTargets,
-        inventory: { foodItems: 0, medicineItems: 0, weaponItems: 0 },
+        inventory: { foodItems: [], medicineItems: [], weaponItems: [] },
         host: player.id,
         timezone: req.body.timezone,
       })
@@ -176,9 +176,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
@@ -197,9 +197,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 0,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [],
+           "weaponItems": [],
+           "medicineItems": []
        },
        "players": [...]
    }
@@ -244,9 +244,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
@@ -265,9 +265,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 0,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [],
+           "weaponItems": [],
+           "medicineItems": []
        },
        "players": [...]
    }
@@ -311,9 +311,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
@@ -332,9 +332,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 0,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [],
+           "weaponItems": [],
+           "medicineItems": []
        },
        "players": [...]
    }
@@ -374,7 +374,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": 5 } } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": [1,5,0,8,4], "medicineItems": [], "weaponItems": [3] } } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -386,9 +386,9 @@ function campaignsRouter (app) {
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
    * @apiSuccess {Object} inventory NOTE: if updating at least one inventory item, need to specify EACH in the body of your update.
-   * @apiSuccess {Integer} inventory.foodItems
-   * @apiSuccess {Integer} inventory.medicineItems
-   * @apiSuccess {Integer} inventory.weaponItems
+   * @apiSuccess {Integer[]} inventory.foodItems
+   * @apiSuccess {Integer[]} inventory.medicineItems
+   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {Player[]} players array of player instances associated with this game
    *
    * @apiSuccessExample Success-Response:
@@ -407,9 +407,9 @@ function campaignsRouter (app) {
            0, ...
        ],
        "inventory": {
-           "foodItems": 5,
-           "weaponItems": 0,
-           "medicineItems": 0
+           "foodItems": [1,5,0,8,4],
+           "weaponItems": [3],
+           "medicineItems": []
        },
        "players": [...]
    }

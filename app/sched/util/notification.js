@@ -2,10 +2,10 @@ const { Expo } = require('expo-server-sdk');
 const expo = new Expo()
 const messages = []
 const message = {
-  to: 'ExponentPushToken[yFGMZrE2YY1NSweba-j_J4]',
+  to: 'ExponentPushToken[tvNlsbI7dv075Ts15wSO44]',
   sound: 'default',
-  body: 'Hey there buddy check out this great push notification',
-  data: { hi: 'hi there' },
+  body: 'Hey there buddy',
+  data: { msg: 'Hey there buddy' },
 }
 messages.push(message)
 
