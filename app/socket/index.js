@@ -9,29 +9,36 @@ const registerEventListenersOnConnect = (socket) => {
   socket.on('disconnect', () => console.log(`client disconnected, socket.id = ${socket.id}`))
 
   socket.on('connectToPlayer', async (playerId) => {
-    console.log(`received connectToPlayer event, playerId ${playerId}`)
-    let player = await Player.findOne({ where: { id: playerId } })
-    if (player) {
-      socket.join(playerId)
-      socket.emit('log', `msg from server: connected to updates to player ${playerId}`)
-    } else {
-      socket.emit('log', `msg from server: no player found with the specified playerId`)
+    try {
+      console.log(`received connectToPlayer event, playerId ${playerId}`)
+      let player = await Player.findOne({ where: { id: playerId } })
+      if (player) {
+        socket.join(playerId)
+        socket.emit('log', `msg from server: connected to updates to player ${player.displayName}, id ${playerId}`)
+      } else {
+        socket.emit('log', `msg from server: no player found with id ${playerId}`)
+      }
     }
 
-    if (player.campaignId) {
-      let campaignId = player.campaignId
+    catch (err) {
+      console.log('ERROR in socket.on connectToPlayer cb: ', err)
+    }
+  })
+
+  socket.on('connectToCampaign', async (campaignId) => {
+    try {
+      console.log(`received connectoToCampaign event, campaignId ${campaignId}`)
       let campaign = await Campaign.findOne({ where: { id: campaignId } })
       if (campaign) {
         socket.join(campaignId)
-        socket.emit('log', `msg from server: connected to updates to campaign ${campaignId}`)
-
-        setTimeout(function() {
-          socket.emit('log', 'msg from server: just seeing if you\'re still awake.')
-        }, 30000)
-
+        socket.emit('log', `msg from server: connected to updates to campaign, id ${campaignId}`)
       } else {
-        socket.emit('log', `msg from server: no campaign found with specified campaigId`)
+        socket.emit('log', `msg from server: no campaign found with id ${campaignId}`)
       }
+    }
+
+    catch (err) {
+      console.log('ERROR in socket.on connectToCampaign cb: ', err)
     }
   })
 

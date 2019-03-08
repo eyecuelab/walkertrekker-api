@@ -101,7 +101,6 @@ async function endOfDayUpdate() {
     const messages = []
     for (let player of prevState.players) {
       if (player.pushToken) {
-        console.log(`Constructing message to send to token ${player.pushToken}`)
         const message = {
           to: player.pushToken,
           sound: 'default',
