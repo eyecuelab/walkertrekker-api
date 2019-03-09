@@ -41,10 +41,8 @@ const campaignIsLost = async (campaign, updatedState) => {
     }
     await sendNotifications(messages)
 
-    console.log('Updating players and deleting campaign')
     const playerInstances = await campaign.getPlayers()
     for (let player of playerInstances) {
-      console.log(player)
       campaign.removePlayer(player)
       player.update({
         inActiveGame: false,

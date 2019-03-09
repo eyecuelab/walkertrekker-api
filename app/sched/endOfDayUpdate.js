@@ -71,8 +71,6 @@ async function endOfDayUpdate() {
     // Check if game is over; if so, execute appropriate end game function, else send update
     const weLost = checkCampaignIsLost(players)
     const weWon = checkCampaignIsWon(campaign)
-    console.log('WELOST: ', weLost)
-    console.log('WEWON: ', weWon)
     if (weLost) {
       await campaignIsLost(campaign)
     }
