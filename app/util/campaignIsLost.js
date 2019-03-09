@@ -1,6 +1,6 @@
 const { sendNotifications } = require('./notifications');
 
-const campaignIsLost = async (campaign, updatedState) => {
+const campaignIsLost = async (campaign) => {
   try {
     const finalCampaignState = await campaign.toJson()
     let players = finalCampaignState.players
