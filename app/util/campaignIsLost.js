@@ -43,8 +43,8 @@ const campaignIsLost = async (campaign, updatedState) => {
 
     const playerInstances = await campaign.getPlayers()
     for (let player of playerInstances) {
-      campaign.removePlayer(player)
-      player.update({
+      await campaign.removePlayer(player)
+      await player.update({
         inActiveGame: false,
         health: null,
         hunger: null,
@@ -53,7 +53,7 @@ const campaignIsLost = async (campaign, updatedState) => {
         invited: []
       })
     }
-    campaign.destroy()
+    await campaign.destroy()
   }
   catch (err) {
     console.log(err)
