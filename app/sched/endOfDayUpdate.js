@@ -2,8 +2,10 @@ if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
 
-const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./util/getCampaigns')
-const { Expo } = require('expo-server-sdk')
+const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
+const { sendNotifications } = require('../util/notifications')
+const campaignIsLost = require('../util/campaignIsLost')
+const campaignIsWon = require('../util/campaignIsWon')
 
 async function endOfDayUpdate() {
 
@@ -12,6 +14,7 @@ async function endOfDayUpdate() {
     : await getAllActiveCampaigns()
 
   const updated = []
+  const messages = []
 
   for (let campaign of campaigns) {
     // add id to array of campaign IDs being updated
@@ -65,71 +68,70 @@ async function endOfDayUpdate() {
     console.log('====================')
     console.log('')
 
-    let update = {
-      players: [],
-      inventoryDiff: {},
+    // Check if game is over; if so, execute appropriate end game function, else send update
+    const weLost = checkCampaignIsLost(players)
+    const weWon = checkCampaignIsWon(campaign)
+    console.log('WELOST: ', weLost)
+    console.log('WEWON: ', weWon)
+    if (weLost) {
+      await campaignIsLost(campaign)
     }
-
-    // Build update object to display on EndOfDaySummary screen in client
-    const prevDay = prevState.currentDay
-    for (let player of prevState.players) {
-      const prevPlayer = player
-      const updatedPlayer = updatedState.players.filter(player => player.id === prevPlayer.id)[0]
-      const playerInfo = {
-        id: player.id,
-        displayName: player.displayName,
-        healthDiff: prevPlayer.health - updatedPlayer.health,
-        stepsDiff: prevPlayer.steps[prevDay] - prevPlayer.stepTargets[prevDay]
+    else if (weWon) {
+      await campaignIsWon(campaign)
+    }
+    else {
+      // Build update object to display on EndOfDaySummary screen in client
+      let update = {
+        players: [],
+        inventoryDiff: {},
       }
-      update.players.push(playerInfo)
-    }
-    Object.keys(prevState.inventory).forEach(item => {
-      update.inventoryDiff = Object.assign({}, update.inventoryDiff, {
-        [item]: prevState.inventory[item].length - updatedState.inventory[item].length
-      })
-    })
-
-    // log the update being sent out to players
-    console.log(`Update data sent out to players: `)
-    console.log(update)
-    console.log('')
-    console.log('====================')
-    console.log('')
-
-    // Construct messages
-    const expo = new Expo()
-    const messages = []
-    for (let player of prevState.players) {
-      if (player.pushToken) {
-        const message = {
-          to: player.pushToken,
-          sound: 'default',
-          body: `Day ${updatedState.currentDay} has come to an end. Tap to see how your group fared today.`,
-          data: {
-            type: 'endOfDayUpdate',
-            data: update
-          }
+      const prevDay = prevState.currentDay
+      for (let player of prevState.players) {
+        const prevPlayer = player
+        const updatedPlayer = updatedState.players.filter(player => player.id === prevPlayer.id)[0]
+        const playerInfo = {
+          id: player.id,
+          displayName: player.displayName,
+          healthDiff: prevPlayer.health - updatedPlayer.health,
+          stepsDiff: prevPlayer.steps[prevDay] - prevPlayer.stepTargets[prevDay]
         }
-        messages.push(message)
+        update.players.push(playerInfo)
       }
-    }
+      Object.keys(prevState.inventory).forEach(item => {
+        update.inventoryDiff = Object.assign({}, update.inventoryDiff, {
+          [item]: prevState.inventory[item].length - updatedState.inventory[item].length
+        })
+      })
 
-    // send push notifications
-    let chunks = expo.chunkPushNotifications(messages);
-    let tickets = [];
-    for (let chunk of chunks) {
-      try {
-        let ticketChunk = await expo.sendPushNotificationsAsync(chunk);
-        console.log('Notification sent.')
-        console.log(ticketChunk);
-        tickets.push(...ticketChunk);
-      } catch (error) {
-        console.log('Error sending notification.')
-        console.error(error);
+      // log the update being sent out to players
+      console.log(`Update data sent out to players: `)
+      console.log(update)
+      console.log('')
+      console.log('====================')
+      console.log('')
+
+      // Construct push notifications
+      for (let player of prevState.players) {
+        if (player.pushToken) {
+          const message = {
+            to: player.pushToken,
+            sound: 'default',
+            body: `Day ${prevState.currentDay + 1} has come to an end. Tap to see how your group fared today.`,
+            data: {
+              type: 'endOfDayUpdate',
+              data: update
+            }
+          }
+          messages.push(message)
+        }
       }
+
     }
 
   }
+
+  // send push notifications
+  await sendNotifications(messages)
 
   // final update log
   console.log(`${updated.length} campaigns updated: `)
@@ -215,28 +217,23 @@ function incrementCurrentDay(campaign) {
   return campaign
 }
 
-// async function sendEndOfDayUpdateToAPI(id, update) {
-//   const fetch = require('node-fetch')
-//   const url = process.env.ENDPOINT + `/api/campaigns/endOfDayUpdate/${id}`
-//   const body = JSON.stringify(update)
-//   const request = {
-//     method: 'PATCH',
-//     body,
-//     headers: {
-//       "appkey": process.env.CLIENT_APP_KEY,
-//       "Content-Type": "application/json",
-//     },
-//   }
-//
-//   try {
-//     const response = await fetch(url, request).then(response => response.json())
-//     console.log(response)
-//   }
-//   catch (err) {
-//     console.log('RECEIVED ERROR RESPONSE FROM SERVER')
-//     console.log(err)
-//   }
-//
-// }
+function checkCampaignIsLost(players) {
+  for (let player of players) {
+    if (player.health <= 0 || player.hunger <= 0) {
+      return true
+    }
+  }
+  return false
+}
+
+function checkCampaignIsWon(campaign) {
+  const endDay = parseInt(campaign.length)
+  const currentDay = campaign.currentDay
+  if (currentDay >= endDay) {
+    return true
+  } else {
+    return false
+  }
+}
 
 endOfDayUpdate()

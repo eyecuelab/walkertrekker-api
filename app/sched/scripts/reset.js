@@ -1,6 +1,6 @@
 require('dotenv').config()
 
-const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('./getCampaigns')
+const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../../util/getCampaigns')
 
 async function reset() {
   const campaigns = await getAllActiveCampaigns()
@@ -8,6 +8,7 @@ async function reset() {
     let players = await campaign.getPlayers()
     for (let player of players) {
       player.health = 100
+      player.hunger = 100
       for (let i = 1; i < player.stepTargets.length; i++) { player.stepTargets[i] = 0 }
       player.changed('stepTargets', true)
       await player.save()

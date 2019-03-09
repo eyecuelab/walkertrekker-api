@@ -7,6 +7,9 @@ const registerEventListenersOnConnect = (socket) => {
   console.log(`client connected, socket.id = ${socket.id}`)
   socket.on('log', (msg) => console.log(msg))
   socket.on('disconnect', () => console.log(`client disconnected, socket.id = ${socket.id}`))
+  socket.on('stayAwake', () => {
+    socket.emit('stayAwake');
+  })
 
   socket.on('connectToPlayer', async (playerId) => {
     try {
@@ -42,16 +45,6 @@ const registerEventListenersOnConnect = (socket) => {
     }
   })
 
-}
-
-function checkTime(timezone) {
-  const now = new Date()
-  const hour = now.getUTCHours()
-  const min = now.getMinutes()
-  let localHour = hour + timezone
-  if (localHour < 0) { localHour = localHour + 24 }
-  if (localHour > 24) { localHour = localHour - 24}
-  return { localHour, min }
 }
 
 module.exports = {

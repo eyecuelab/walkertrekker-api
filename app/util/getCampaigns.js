@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Op = Sequelize.Op;
-const Campaign = sequelize.import('../../models/campaign')
+const Campaign = sequelize.import('../models/campaign')
 
 async function getActiveCampaignsAtLocalTime(timeTarget = 0) {
   // timeTarget: int from 0-23 (0: midnight, 23: 11pm)

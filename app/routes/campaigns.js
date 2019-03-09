@@ -355,12 +355,25 @@ function campaignsRouter (app) {
         endDate,
       })
       let players = await campaign.getPlayers()
+      const messages = []
       for (let player of players) {
         await player.update({ invited: [], stepTargets: campaign.stepTargets })
+        if (player.pushToken) {
+          const message = {
+            to: player.pushToken,
+            sound: 'default',
+            body: `Your Walker Trekker campaign has begun.`,
+            data: {
+              type: 'campaignStarted',
+              data: {}
+            }
+          }
+          messages.push(message)
+        }
       }
+      await sendNotifications(messages)
       let json = await campaign.toJson()
       res.io.in(campaign.id).emit('sendCampaignInfo', json)
-      res.io.in(campaign.id).emit('campaignStarted', json)
       return res.json(json)
     }).catch(function(err) {
       console.log(err)
@@ -486,14 +499,15 @@ function campaignsRouter (app) {
    }
   */
   app.delete('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
-    co(function*() {
+    co(async function() {
       let campaign = req.campaign
       let campaignId = campaign.id
-      let players = yield campaign.getPlayers()
+      let players = await campaign.getPlayers()
       let json = {
         players: [],
         msg: `Campaign ${campaignId} has been deleted from database.`
       }
+      const messages = []
       for (let player of players) {
         player.update({
           campaignId: null,
@@ -505,10 +519,21 @@ function campaignsRouter (app) {
         })
         let playerData = player.toJson()
         json.players.push(playerData)
+        if (player.pushToken) {
+          const message = {
+            to: player.pushToken,
+            body: 'The host of your campaign as abandoned the game.',
+            sound: 'default',
+            data: {
+              type: 'campaignDeleted',
+              data: {}
+            }
+          }
+        }
       }
+      await sendNotifications(messages)
       campaign.destroy()
       res.io.in(campaign.id).emit('sendCampaignInfo', json)
-      res.io.in(campaign.id).emit('campaignDeleted', json)
       return res.json(json)
     }).catch(function (err) {
       console.log(err)
