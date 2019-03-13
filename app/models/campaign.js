@@ -49,7 +49,6 @@ function CampaignModel (sequelize, DataTypes) {
         max: 12
       }
     },
-    votes: DataTypes.ARRAY(DataTypes.INTEGER),
   })
 
   Campaign.hasMany(Player)
