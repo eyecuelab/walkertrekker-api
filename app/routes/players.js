@@ -146,9 +146,14 @@ function playersRouter (app) {
    * ]
   */
   app.patch('/api/players', appKeyCheck, fetchPlayer, function(req, res) {
-    co(function* () {
+    co(async function () {
       let player = req.player
-      player.update(req.body.playerUpdate)
+      await player.update(req.body.playerUpdate)
+      if (player.campaignId) {
+        const campaign = await Campaign.findOne({ where: { id: player.campaignId } })
+        const info = await campaign.toJson()
+        res.io.in(campaign.id).emit('sendCampaignInfo', info)
+      }
       let json = player.toJson()
       res.io.in(player.id).emit('sendPlayerInfo', json)
       return res.json(json)
