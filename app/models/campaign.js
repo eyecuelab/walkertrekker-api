@@ -1,4 +1,6 @@
-require('dotenv').config()
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
 
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
