@@ -23,7 +23,7 @@ const forceEndOfDay = async function() {
   console.log('CAMPAIGN')
   console.log(campaignJson)
   let messages = []
-  for (let player of campaign.players) {
+  for (let player of campaignJson.players) {
     if (player.pushToken) {
       const message = {
         to: player.pushToken,
