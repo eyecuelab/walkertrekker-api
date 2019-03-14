@@ -19,8 +19,11 @@ const update = { players:
 const forceEndOfDay = async function() {
   const campaign = await Campaign.findOne({ where: { id: "9915d730-1c37-4602-af6b-c55c87510bc1" } })
   const players = await campaign.getPlayers()
+  const campaignJson = await campaign.toJson()
+  console.log('CAMPAIGN')
+  console.log(campaignJson)
   let messages = []
-  for (let player of update.players) {
+  for (let player of campaign.players) {
     if (player.pushToken) {
       const message = {
         to: player.pushToken,
