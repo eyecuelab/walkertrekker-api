@@ -4,6 +4,7 @@ const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const { appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, } = require('../middlewares');
+const { sendNotifications } = require('../util/notifications');
 const Campaign = sequelize.import('../models/campaign');
 const Player = sequelize.import('../models/player');
 

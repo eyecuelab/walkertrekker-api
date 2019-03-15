@@ -26,7 +26,6 @@ const campaignIsLost = async (campaign) => {
     console.log('')
     console.log('  THIS CAMPAIGN HAS ENDED IN DEFEAT, SENDING THE FOLLOWING DATA TO PLAYERS VIA PUSH NOTIFICATION')
     console.log('')
-    console.log(dataToSend)
 
     for (let player of finalCampaignState.players) {
       if (player.pushToken) {
