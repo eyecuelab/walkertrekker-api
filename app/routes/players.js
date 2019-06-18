@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary')
 const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 
-const { appKeyCheck, playerLookup, fetchPlayer, lookupPhone, getImage } = require('../middlewares');
+const { appKeyCheck, playerLookup, fetchPlayer, fetchPlayerByNum, lookupPhone, getImage } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
@@ -49,6 +49,26 @@ function playersRouter (app) {
       })
       if (player == null) {
         return res.json({ error: 'No player found with specified player ID' })
+      }
+      let json = await player.toJson()
+      return res.json(json)
+    }).catch(function(err) {
+      console.log(err)
+      res.json({ error: 'Error fetching players' })
+    })
+  })
+
+
+  // this will be a new function to for account recovery
+  app.get('/api/players/recover/:phoneNumber', appKeyCheck, fetchPlayerByNum, function(req, res) {
+    console.log("params", req.params)
+    console.log("num", req.params.phoneNumber)
+    co(async function () {
+      let player = await Player.findOne({
+        where: { phoneNumber: req.params.phoneNumber }
+      })
+      if (player == null) {
+        return res.json({ error: 'No player found with specified player number' })
       }
       let json = await player.toJson()
       return res.json(json)

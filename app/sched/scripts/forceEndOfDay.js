@@ -3,20 +3,21 @@ const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Campaign = sequelize.import('../../models/campaign')
 
+
 const update = { players:
-  [ { id: '8f97e71b-ffbc-4348-a350-789eaf3b335f',
-  displayName: 'hi im joe',
+  [ { id: 'd88fc749-760d-43ee-a2e8-18614b87d9da',
+  displayName: 'Kim',
   healthDiff: 7,
   stepsDiff: 5444 },
-  { id: 'b9de95ec-730e-4d64-b2f7-ba7e19857e67',
-  displayName: 'josh',
+  { id: '6d567eb6-f2d5-48b4-9ad9-bb20171fa019',
+  displayName: 'Digi',
   healthDiff: 30,
   stepsDiff: -709 } ],
   inventoryDiff: { foodItems: 0, weaponItems: 0, medicineItems: 0 },
 }
 
 const forceEndOfDay = async function() {
-  const campaign = await Campaign.findOne({ where: { id: "9915d730-1c37-4602-af6b-c55c87510bc1" } })
+  const campaign = await Campaign.findOne({ where: { id: "d6e61e24-9cb2-42bc-b363-5ca00fa58078" } })
   const players = await campaign.getPlayers()
   const campaignJson = await campaign.toJson()
   console.log('CAMPAIGN')

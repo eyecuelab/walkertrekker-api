@@ -1,5 +1,7 @@
 const twilioAccountSid = process.env.TWILIO_ACCOUNT_SID
 const twilioAuthToken = process.env.TWILIO_AUTH_TOKEN
+const Twilio = require('twilio')
+const client = Twilio(twilioAccountSid, twilioAuthToken)
 
 function PlayerModel (sequelize, DataTypes) {
 
@@ -66,6 +68,20 @@ function PlayerModel (sequelize, DataTypes) {
       stepTargets
     }
     return json;
+  }
+
+  //player account recovery
+  Player.prototype.getAccount = function(number, link) {
+    const msg = `Click on the link to recover your account: ${link}`
+    console.log(`--------------sending--------------`)
+    console.log(`to: ${number}`)
+    console.log(`message: ${msg}`)
+    console.log(`-----------------------------------`)
+    client.messages.create({
+      body: msg,
+      to: number,
+      from: process.env.TWILIO_NUMBER
+    }).then(message => console.log(`SMS message sent, sid: ${message.sid}`))
   }
 
   return Player

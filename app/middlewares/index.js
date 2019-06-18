@@ -34,6 +34,22 @@ function fetchPlayer (req, res, done) {
   })
 }
 
+function fetchPlayerByNum (req, res, done) {
+  console.log("number?", req.body.phoneNumber)
+  console.log("body?", req.body)
+  Player.findOne({
+    where: { phoneNumber: req.body.phoneNumber }
+  })
+  .then(function(player) {
+    if (player == null) {
+      req.player = 'No player found'
+    } else {
+      req.player = player
+    }
+    done();
+  })
+}
+
 function fetchCampaign (req, res, done) {
   Campaign.findOne({
     where: { id: req.params.campaignId }
@@ -52,13 +68,16 @@ function lookupPhone (req, res, done) {
   }).catch(err => { res.error = err; done() })
 }
 
+
+//this will be fixed be requiring each number to only be used once
+//CURRENTLY there is an issue if the same number exists twice, only grabs first instance
 function checkPlayerInActiveCampaign (req, res, done) {
   Player.findOne({
     where: { phoneNumber: req.phoneNumber }
   }).then(function(player) {
     if (player == null) { done() }
     else if (player.inActiveGame == true) {
-      return res.json({ error: 'This player is already in an active campaign and cannot be invited.' })
+      return res.json({ error: 'This player is already in an active campaign and cannot be invited.'})
     } else { done() }
   })
 }
@@ -79,6 +98,7 @@ function getImage (req, res, done) {
 module.exports = {
   appKeyCheck,
   fetchPlayer,
+  fetchPlayerByNum,
   fetchCampaign,
   lookupPhone,
   checkPlayerInActiveCampaign,
