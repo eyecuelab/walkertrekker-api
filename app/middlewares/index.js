@@ -34,21 +34,6 @@ function fetchPlayer (req, res, done) {
   })
 }
 
-function fetchPlayerByNum (req, res, done) {
-  console.log("number?", req.body.phoneNumber)
-  console.log("body?", req.body)
-  Player.findOne({
-    where: { phoneNumber: req.body.phoneNumber }
-  })
-  .then(function(player) {
-    if (player == null) {
-      req.player = 'No player found'
-    } else {
-      req.player = player
-    }
-    done();
-  })
-}
 
 function fetchCampaign (req, res, done) {
   Campaign.findOne({
@@ -98,7 +83,6 @@ function getImage (req, res, done) {
 module.exports = {
   appKeyCheck,
   fetchPlayer,
-  fetchPlayerByNum,
   fetchCampaign,
   lookupPhone,
   checkPlayerInActiveCampaign,
