@@ -59,7 +59,7 @@ function playersRouter (app) {
   })
 
 
-  // this will be a new function to for account recovery
+  // endpoint for account recovery
   app.get('/api/players/recover/:phoneNumber', appKeyCheck, function(req, res) {
     co(async function () {
       let player = await Player.findOne({
