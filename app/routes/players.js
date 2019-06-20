@@ -58,6 +58,26 @@ function playersRouter (app) {
     })
   })
 
+
+  // endpoint for account recovery
+  app.get('/api/players/recover/:phoneNumber', appKeyCheck, function(req, res) {
+    co(async function () {
+      let player = await Player.findOne({
+        where: { phoneNumber: req.params.phoneNumber }
+      })
+      if (player == null) {
+        return res.json({ error: 'No player found with specified player number, cannot send recovery message' })
+      }
+      const link = req.body.link ? req.body.link : `walkertrekker://recovery?playerId=${player.id}`
+      player.getAccount(player.phoneNumber, link)
+      let json = await player.toJson()
+      return res.json(json)
+    }).catch(function(err) {
+      console.log(err)
+      res.json({ error: 'Error fetching players' })
+    })
+  })
+
   /**
    * @api {post} /api/players Create New Player
    * @apiName Create New Player

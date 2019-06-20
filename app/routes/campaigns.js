@@ -372,6 +372,7 @@ function campaignsRouter (app) {
           messages.push(message)
         }
       }
+      console.log('messages', messages)
       await sendNotifications(messages)
       let json = await campaign.toJson()
       res.io.in(campaign.id).emit('sendCampaignInfo', json)
