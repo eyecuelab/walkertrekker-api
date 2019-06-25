@@ -22,7 +22,7 @@ function appKeyCheck (req, res, done) {
 
 function fetchPlayer (req, res, done) {
   Player.findOne({
-    where: { id: req.body.playerId }
+    where: {$or: [{id: req.body.playerId}, { phoneNumber: req.body.phoneNumber }]}
   })
   .then(function(player) {
     if (player == null) {
@@ -33,6 +33,19 @@ function fetchPlayer (req, res, done) {
     done();
   })
 }
+
+// function fetchPlayerPhone (req, res, done) {
+//   Player.findOne({
+//     where: { phoneNumber: req.body.phoneNumber }
+//   })
+//   .then(function(playerNum) {
+//     if (req.player == null) {
+//       req.playerNum = 'No player found'
+//     } else {
+//       req.playerNum = player
+//     }
+//   })
+// }
 
 
 function fetchCampaign (req, res, done) {

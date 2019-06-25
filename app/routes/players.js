@@ -44,6 +44,7 @@ function playersRouter (app) {
   */
   app.get('/api/players/:playerId', appKeyCheck, fetchPlayer, function(req, res) {
     co(async function () {
+      console.log("env", process.env.DATABASE_URL)
       let player = await Player.findOne({
         where: { id: req.params.playerId }
       })
