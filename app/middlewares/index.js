@@ -22,7 +22,21 @@ function appKeyCheck (req, res, done) {
 
 function fetchPlayer (req, res, done) {
   Player.findOne({
-    where: {$or: [{id: req.body.playerId}, { phoneNumber: req.body.phoneNumber }]}
+    where: {id: req.body.playerId }
+  })
+  .then(function(player) {
+    if (player == null) {
+      req.player = 'No player found'
+    } else {
+      req.player = player
+    }
+    done();
+  })
+}
+
+function checkDuplicateNum (req, res, done) {
+  Player.findOne({
+    where: { phoneNumber: req.body.phoneNumber }
   })
   .then(function(player) {
     if (player == null) {
@@ -96,6 +110,7 @@ function getImage (req, res, done) {
 module.exports = {
   appKeyCheck,
   fetchPlayer,
+  checkDuplicateNum,
   fetchCampaign,
   lookupPhone,
   checkPlayerInActiveCampaign,

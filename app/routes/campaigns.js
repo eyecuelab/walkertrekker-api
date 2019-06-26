@@ -128,6 +128,8 @@ function campaignsRouter (app) {
         return res.json({ error: 'No player found with given playerId, cannot create campaign.' })
       }
       let player = req.player
+      console.log(" +++++ new player before ADDPLAYER +++++", player);
+
       let stepTargets = [];
       const params = req.body.params;
       const len = parseInt(params.campaignLength);
@@ -149,11 +151,15 @@ function campaignsRouter (app) {
       })
       await newCampaign.addPlayer(player.id)
       await player.update(player.initCampaign(len))
-      let playerInfo = player.toJson()
       let json = await newCampaign.toJson()
-      res.io.in(player.id).emit('sendPlayerInfo', playerInfo)
+      let playerInfo = await player.toJson()
+      await res.io.in(player.id).emit('sendPlayerInfo', json.players[0])
+      console.log(" +++++ new player after EMIT +++++", json.players[0])
+      console.log(" +++++ campagn ??? +++++", json)
       return res.json(json)
-    }).catch(function (err) {
+    }).then(
+
+    ).catch(function (err) {
       console.log(err)
       res.json({ error: 'Error creating a game' })
     })
