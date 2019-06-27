@@ -150,16 +150,22 @@ function campaignsRouter (app) {
         timezone: req.body.timezone,
       })
       await newCampaign.addPlayer(player.id)
-      await player.update(player.initCampaign(len))
+      player = await player.update(player.initCampaign(len), {
+        returning: true,
+      })
+      .then(function (result) {
+        console.log(typeof result);
+        
+        return result.dataValues
+      });
+      console.log(typeof player);
+      console.log("+++++++++ PLAYER UPDATE +++++++++++", player)
       let json = await newCampaign.toJson()
-      let playerInfo = await player.toJson()
-      await res.io.in(player.id).emit('sendPlayerInfo', json.players[0])
-      console.log(" +++++ new player after EMIT +++++", json.players[0])
-      console.log(" +++++ campagn ??? +++++", json)
+      
+      res.io.in(player.id).emit('sendPlayerInfo', player)
       return res.json(json)
-    }).then(
-
-    ).catch(function (err) {
+    })
+    .catch(function (err) {
       console.log(err)
       res.json({ error: 'Error creating a game' })
     })

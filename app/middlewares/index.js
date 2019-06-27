@@ -35,14 +35,17 @@ function fetchPlayer (req, res, done) {
 }
 
 function checkDuplicateNum (req, res, done) {
+  console.log('check dupe')
   Player.findOne({
     where: { phoneNumber: req.body.phoneNumber }
   })
-  .then(function(player) {
-    if (player == null) {
-      req.player = 'No player found'
+  .then(function(number) {
+    if (number == null) {
+      console.log('no number found')
+      req.number = 'No number found'
     } else {
-      req.player = player
+      console.log('check dupe')
+      req.number = number
     }
     done();
   })
