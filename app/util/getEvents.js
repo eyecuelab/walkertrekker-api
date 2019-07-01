@@ -17,3 +17,4 @@ async function getEvents(story) {
   return events;
 }
 
+module.exports = getEvents

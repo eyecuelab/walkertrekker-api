@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
+const getEvents = require('../util/getEvents')
 
 
 async function randomEvent() {
@@ -20,7 +21,9 @@ async function randomEvent() {
 
   for (let campaign of campaigns) {
 
-    let players = await campaign.getPlayers()
+    // get players to send notifications to
+    let players = await campaign.getPlayers();
+
     let eventType = null;
     //storyFreq will be based on the length of the campaign (story event occurs once every n days)
     campaign.length === '15' ? storyFreq = 3 : campaign.length === '30' ? storyFreq = 6 : storyFreq = 12;
@@ -28,9 +31,14 @@ async function randomEvent() {
     //Story events will start on the first full day of the campaign
     parseInt(campaign.currentDay)-1 % storyFreq ? eventType = 'random' : eventType = 'story';
 
-    //Get all possible events
-    
+    //Get all possible events of correct type
+    const allTypeEvents = await getEvents(eventType === 'story' ? true : false)
 
+    // We want to check against a campaign array that holds all the events that have triggered
+    // const releventTypeEvents = allTypeEvents.filter(val => !pastEvents.includes(val));
+    console.log("ALL TYPE EVENTS", allTypeEvents)
+    const evt = allTypeEvents[Math.floor(Math.random() * allTypeEvents.length)];
+    console.log("SINGLE EVENT:::::: ", evt)
     // Build event object to display on Event screen in client
     let event = {
       players: [],
@@ -39,11 +47,11 @@ async function randomEvent() {
     event.players = players;
     event.data = {
       eventType: eventType,
-      antecedent: '',
-      optionAButton: 'OptionA',
-      optionAText: 'optionAText',
-      optionBButton: 'OptionB',
-      optionBText: 'optionBText',
+      antecedent: evt.antecedent,
+      optionAButton: evt.optionAButton,
+      optionAText: evt.optionAText,
+      optionBButton: evt.optionBButton,
+      optionBText: evt.optionBText,
     }
 
     console.log("in bulk", players)
