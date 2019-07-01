@@ -28,8 +28,10 @@ async function randomEvent() {
     //Story events will start on the first full day of the campaign
     parseInt(campaign.currentDay)-1 % storyFreq ? eventType = 'random' : eventType = 'story';
 
-    // Build event object to display on Event screen in client
+    //Get all possible events
     
+
+    // Build event object to display on Event screen in client
     let event = {
       players: [],
       data: {},

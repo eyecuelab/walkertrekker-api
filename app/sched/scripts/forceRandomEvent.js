@@ -1,10 +1,12 @@
+require('dotenv').config()
+
 const { sendNotifications } = require('../../util/notifications')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Campaign = sequelize.import('../../models/campaign')
 
 const forceRandomEvent = async function() {
-  const campaign = await Campaign.findOne({ where: { id: "9915d730-1c37-4602-af6b-c55c87510bc1" } })
+  const campaign = await Campaign.findOne({ where: { id: "3fd0b9d3-e9d1-4233-a064-48b76389870b" } })
   const players = await campaign.getPlayers()
   const campaignJson = await campaign.toJson()
   console.log('CAMPAIGN')
@@ -17,7 +19,7 @@ const forceRandomEvent = async function() {
         sound: 'default',
         body: `Your group has reached a crossroads. Tap to decide how to deal with this latest crisis.`,
         data: {
-          type: 'randomEventStart',
+          type: 'eventStart',
         }
       }
       messages.push(message)

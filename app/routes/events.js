@@ -5,8 +5,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const { appKeyCheck, fetchEvent, } = require('../middlewares');
 const { sendNotifications } = require('../util/notifications');
-const Campaign = sequelize.import('../models/campaign');
-const Player = sequelize.import('../models/player');
 const Event = sequelize.import('../models/event');
 
 function eventsRouter (app) {
@@ -23,7 +21,31 @@ function eventsRouter (app) {
       res.json({ error: 'Error fetching an event' })
     })
   })
-  
+
+
+  // just for our use, DO NOT connect to front end
+  app.post('/api/events/', appKeyCheck, async function(req, res) {
+      try {
+        const newEvent = Event.build({
+          id: uuid.v4(),
+          antecedent: req.body.antecedent,
+          optionAButton: req.body.optionAButton,
+          optionAResult: req.body.optionAResult,
+          optionAText: req.body.optionAText,
+          optionBButton: req.body.optionBButton,
+          optionBResult: req.body.optionBResult,
+          optionBText: req.body.optionBText,
+          optionALog: req.body.optionALog,
+          optionBLog: req.body.optionBLog,
+          storyEvent: req.body.storyEvent          
+        })
+        newEvent.save()
+        let json = newEvent.toJson();
+        return res.json(json)
+      } catch(error) {
+        return res.json({error: 'Error creating new event'})
+      }
+    })
 }
 
 module.exports = eventsRouter
