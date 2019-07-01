@@ -536,7 +536,7 @@ function campaignsRouter (app) {
         if (player.pushToken) {
           const message = {
             to: player.pushToken,
-            body: 'The host of your campaign as abandoned the game.',
+            body: 'The host of your campaign has abandoned the game.',
             sound: 'default',
             data: {
               type: 'campaignDeleted',

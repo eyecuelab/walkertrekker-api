@@ -51,19 +51,6 @@ function checkDuplicateNum (req, res, done) {
   })
 }
 
-// function fetchPlayerPhone (req, res, done) {
-//   Player.findOne({
-//     where: { phoneNumber: req.body.phoneNumber }
-//   })
-//   .then(function(playerNum) {
-//     if (req.player == null) {
-//       req.playerNum = 'No player found'
-//     } else {
-//       req.playerNum = player
-//     }
-//   })
-// }
-
 
 function fetchCampaign (req, res, done) {
   Campaign.findOne({
