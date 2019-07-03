@@ -51,6 +51,7 @@ function CampaignModel (sequelize, DataTypes) {
         max: 12
       }
     },
+    completedEvents: DataTypes.ARRAY(DataTypes.INTEGER)
   })
 
   Campaign.hasMany(Player)
@@ -69,6 +70,7 @@ function CampaignModel (sequelize, DataTypes) {
       inventory: this.inventory,
       host: this.host,
       timezone: this.timezone,
+      completedEvents: this.completedEvents,
       players: [],
     }
 

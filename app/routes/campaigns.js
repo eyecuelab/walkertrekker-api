@@ -148,6 +148,7 @@ function campaignsRouter (app) {
         inventory: { foodItems: [], medicineItems: [], weaponItems: [] },
         host: player.id,
         timezone: req.body.timezone,
+        completedEvents: [],
       })
       await newCampaign.addPlayer(player.id)
       player = await player.update(player.initCampaign(len), {

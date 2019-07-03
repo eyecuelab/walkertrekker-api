@@ -5,7 +5,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
-const getEvents = require('../util/getEvents')
 
 
 async function randomEvent() {
@@ -23,37 +22,30 @@ async function randomEvent() {
 
     // get players to send notifications to
     let players = await campaign.getPlayers();
-
     let eventType = null;
-    //storyFreq will be based on the length of the campaign (story event occurs once every n days)
     campaign.length === '15' ? storyFreq = 3 : campaign.length === '30' ? storyFreq = 6 : storyFreq = 12;
 
     //Story events will start on the first full day of the campaign
     parseInt(campaign.currentDay)-1 % storyFreq ? eventType = 'random' : eventType = 'story';
 
-    //Get all possible events of correct type
-    const allTypeEvents = await getEvents(eventType === 'story' ? true : false)
+    const events = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
+    const completedEvents = campaign.completedEvents
+    console.log('completedEvents', campaign.completedEvents)
+    const possibleEvents = events.filter(val => !completedEvents.includes(val))
+    const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
+    console.log("EVENT TO INSUE", evtId)
 
-    // We want to check against a campaign array that holds all the events that have triggered
-    // const releventTypeEvents = allTypeEvents.filter(val => !pastEvents.includes(val));
-    console.log("ALL TYPE EVENTS", allTypeEvents)
-    const evt = allTypeEvents[Math.floor(Math.random() * allTypeEvents.length)];
-    console.log("SINGLE EVENT:::::: ", evt)
-    // Build event object to display on Event screen in client
     let event = {
       players: [],
       data: {},
     }
+
     event.players = players;
     event.data = {
       eventType: eventType,
-      antecedent: evt.antecedent,
-      optionAButton: evt.optionAButton,
-      optionAText: evt.optionAText,
-      optionBButton: evt.optionBButton,
-      optionBText: evt.optionBText,
+      eventID: evtId,
     }
-
+  
     console.log("in bulk", players)
     console.log("=======================")
     console.log("in bulk", campaign)
