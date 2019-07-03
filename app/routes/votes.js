@@ -50,10 +50,6 @@ function votesRouter (app) {
     })
   })
 
-
-
-
-
 }
 
 

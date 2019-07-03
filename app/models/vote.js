@@ -36,8 +36,6 @@ function VoteModel (sequelize, DataTypes) {
     Vote.hasOne(models.Player)
   }
 
-
-
   Vote.prototype.toJson = function() {
     let json = {
       id: this.id,
