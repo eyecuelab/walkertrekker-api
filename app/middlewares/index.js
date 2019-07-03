@@ -67,7 +67,11 @@ function fetchEvent (req, res, done) {
   Event.findOne({
     where: { id: req.params.eventId }
   }).then((event) => {
-    req.event = event
+    if (event == null) {
+      req.event = 'No event found'
+    } else {
+      req.event = event
+    }
     done()
   })
 }
