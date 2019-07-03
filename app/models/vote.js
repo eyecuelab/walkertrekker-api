@@ -12,9 +12,15 @@ function VoteModel (sequelize, DataTypes) {
       defaultValue: sequelize.UUIDV4,
       primaryKey: true,
     },
-    playerVote: {
+    vote: {
       type: DataTypes.ENUM,
       values: ['A', 'B'],},
+    eventId: {
+      type: DataTypes.UUID,
+    },
+    playerId: {
+      type: DataTypes.UUID,
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -25,13 +31,19 @@ function VoteModel (sequelize, DataTypes) {
     },
   });
 
+  Vote.associate = function(models) {
+    Vote.belongsTo(models.Event)
+    Vote.hasOne(models.Player)
+  }
+
+
+
   Vote.prototype.toJson = function() {
     let json = {
       id: this.id,
+      vote: this.vote,
       eventId: this.eventId,
       playerId: this.playerId,
-      active: this.active,
-      story: this.story
     }
     return json
   }

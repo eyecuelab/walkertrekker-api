@@ -7,8 +7,19 @@ exports.up = function(pgm) {
     },
     eventId: { type: 'string' },
     playerId: { type: 'string' },
-    vote: { type: 'voteType' }
+    vote: { type: 'voteType' },
+    createdAt: {
+      type: 'datetime',
+      notNull: true,
+      default: pgm.func('current_timestamp')
+    },
+    updatedAt: {
+      type: 'datetime',
+      notNull: true,
+      default: pgm.func('current_timestamp')
+    }
   })
+  
 };
 
 exports.down = function(pgm) {

@@ -14,6 +14,7 @@ const upload = multer({ dest: 'uploads/' }).single('avatar')
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
 const Event = sequelize.import('../models/event')
+const Vote = sequelize.import('../models/vote')
 
 function appKeyCheck (req, res, done) {
   if (req.headers['appkey'] !== process.env.CLIENT_APP_KEY) {
@@ -71,6 +72,14 @@ function fetchEvent (req, res, done) {
   })
 }
 
+function fetchVote (req, res, done) {
+  Vote.findOne({
+    where: { id: req.params.voteId }
+  }).then((vote) => {
+    req.vote = vote
+    done()
+  })
+}
 
 function lookupPhone (req, res, done) {
   client.lookups.phoneNumbers(req.body.phoneNumber).fetch()
@@ -116,6 +125,7 @@ module.exports = {
   checkDuplicateNum,
   fetchCampaign,
   fetchEvent,
+  fetchVote,
   lookupPhone,
   checkPlayerInActiveCampaign,
   getImage,
