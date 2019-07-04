@@ -4,7 +4,9 @@ if (process.env.NODE_ENV !== 'production') {
 
 
 function EventModel (sequelize, DataTypes) {
-  
+
+  const Vote = sequelize.import('../models/vote')
+
   const Event = sequelize.define('events', {
     id: {
       type: DataTypes.UUID,
@@ -30,18 +32,24 @@ function EventModel (sequelize, DataTypes) {
     }
   });
 
-  Event.associate = function(models) {
-    Event.belongsTo(models.Campaign)
-    Event.hasMany(models.Vote)
-  }
+  Event.hasMany(Vote)
 
-  Event.prototype.toJson = function() {
+  Event.prototype.toJson = async function() {
     let json = {
       id: this.id,
       campaignId: this.campaignId,
       eventNumber: this.eventNumber,
       active: this.active,
-      story: this.story
+      story: this.story,
+      votes: [],
+    }
+
+    let votes = await this.getVotes()
+    if (votes) {
+      for (let vote of votes) {
+        let voteData = vote.toJson()
+        json.votes.push(voteData);
+      }
     }
     return json
   }

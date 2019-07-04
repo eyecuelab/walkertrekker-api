@@ -1,11 +1,16 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+const co = require('co')
+const uuid = require('node-uuid')
+const Sequelize = require('sequelize')
+const sequelize = new Sequelize(process.env.DATABASE_URL)
+
+const Event = sequelize.import('../models/event');
 
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
-
 
 async function randomEvent() {
 
@@ -34,6 +39,28 @@ async function randomEvent() {
     const possibleEvents = events.filter(val => !completedEvents.includes(val))
     const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
     console.log("EVENT TO INSUE", evtId)
+
+    createNewEvent = () => {
+      co(async function() {
+        console.log('now building event')
+        const newEvent = await Event.create({
+          id: uuid.v4(),
+          eventNumber: evtId,
+          story: eventType,
+          active: true,
+          campaignId: campaign.id,
+        })
+        let json = newEvent.toJson();
+        return res.json(json)
+      }).then(function (result) {
+        console.log(typeof result);
+        console.log( result.dataValues);
+        return result.dataValues
+      }).catch((error) => {
+        return res.json({ error: "Error creating new Event" })
+      })
+    }
+    createNewEvent();
 
     let event = {
       players: [],
