@@ -28,6 +28,7 @@ async function randomEvent() {
     // get players to send notifications to
     let players = await campaign.getPlayers();
     let eventType = null;
+    let eventUUID = null;
     campaign.length === '15' ? storyFreq = 3 : campaign.length === '30' ? storyFreq = 6 : storyFreq = 12;
 
     //Story events will start on the first full day of the campaign
@@ -40,7 +41,7 @@ async function randomEvent() {
     const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
     console.log("EVENT TO INSUE", evtId)
 
-    createNewEvent = () => {
+    createNewEvent = (req, res) => {
       co(async function() {
         console.log('now building event')
         const newEvent = await Event.create({
@@ -54,7 +55,7 @@ async function randomEvent() {
         return res.json(json)
       }).then(function (result) {
         console.log(typeof result);
-        console.log( result.dataValues);
+        console.log("========== Result",  result.dataValues);
         return result.dataValues
       }).catch((error) => {
         return res.json({ error: "Error creating new Event" })
@@ -70,12 +71,11 @@ async function randomEvent() {
     event.players = players;
     event.data = {
       eventType: eventType,
-      eventID: evtId,
+      eventNumber: evtId,
+      eventId: eventUUID,
     }
   
-    console.log("in bulk", players)
     console.log("=======================")
-    console.log("in bulk", campaign)
 
     if (eventType === 'story') {
       
