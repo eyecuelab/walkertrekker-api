@@ -49,8 +49,20 @@ function eventsRouter (app) {
     })
   })
 
-
-
+  app.patch('/api/events/:eventId', appKeyCheck, fetchEvent, async function(req, res) {
+    co(async function() {
+      let event = req.event
+      console.log('now updating event')
+      await event.update(req.body.eventUpdate)
+      console.log("updated", event)
+      let json = await event.toJson();
+      console.log("json", json)
+      console.log("json", res.json(json))
+      return res.json(json)
+    }).catch((error) => {
+      return res.json({ error: "Error updating Event" })
+    })
+  })
 
 
 }
