@@ -13,7 +13,7 @@ const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../ut
 const { sendNotifications } = require('../util/notifications')
 
 
-async function randomEvent() {
+randomEvent = async() => {
 
   const campaigns = process.env.NODE_ENV == 'production'
     ? await getActiveCampaignsAtLocalTime(20)
@@ -42,7 +42,7 @@ async function randomEvent() {
     const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
     console.log("EVENT TO INSUE", evtId)
 
-    
+
     createNewEvent = async () => {
       try {
         console.log('now building event')
