@@ -13,6 +13,8 @@ const upload = multer({ dest: 'uploads/' }).single('avatar')
 
 const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
+const Event = sequelize.import('../models/event')
+const Vote = sequelize.import('../models/vote')
 
 function appKeyCheck (req, res, done) {
   if (req.headers['appkey'] !== process.env.CLIENT_APP_KEY) {
@@ -22,7 +24,7 @@ function appKeyCheck (req, res, done) {
 
 function fetchPlayer (req, res, done) {
   Player.findOne({
-    where: { id: req.body.playerId }
+    where: {id: req.body.playerId }
   })
   .then(function(player) {
     if (player == null) {
@@ -34,12 +36,51 @@ function fetchPlayer (req, res, done) {
   })
 }
 
+function checkDuplicateNum (req, res, done) {
+  console.log('check dupe')
+  Player.findOne({
+    where: { phoneNumber: req.body.phoneNumber }
+  })
+  .then(function(number) {
+    if (number == null) {
+      console.log('no number found')
+      req.number = 'No number found'
+    } else {
+      console.log('check dupe')
+      req.number = number
+    }
+    done();
+  })
+}
+
 
 function fetchCampaign (req, res, done) {
   Campaign.findOne({
     where: { id: req.params.campaignId }
   }).then(function(campaign) {
     req.campaign = campaign
+    done()
+  })
+}
+
+function fetchEvent (req, res, done) {
+  Event.findOne({
+    where: { id: req.params.eventId }
+  }).then((event) => {
+    if (event == null) {
+      req.event = 'No event found'
+    } else {
+      req.event = event
+    }
+    done()
+  })
+}
+
+function fetchVote (req, res, done) {
+  Vote.findOne({
+    where: { id: req.params.voteId }
+  }).then((vote) => {
+    req.vote = vote
     done()
   })
 }
@@ -80,10 +121,15 @@ function getImage (req, res, done) {
   done()
 }
 
+
+
 module.exports = {
   appKeyCheck,
   fetchPlayer,
+  checkDuplicateNum,
   fetchCampaign,
+  fetchEvent,
+  fetchVote,
   lookupPhone,
   checkPlayerInActiveCampaign,
   getImage,

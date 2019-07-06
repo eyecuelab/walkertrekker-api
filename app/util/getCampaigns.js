@@ -42,7 +42,18 @@ async function getAllActiveCampaigns() {
   return campaigns
 }
 
+async function getSpecificCampaign(campaignId) {
+  const campaign = await Campaign.findOne({
+    where: {
+      id: campaignId,
+    }
+  })
+  return campaign
+}
+
+
 module.exports = {
   getActiveCampaignsAtLocalTime,
   getAllActiveCampaigns,
+  getSpecificCampaign,
 }

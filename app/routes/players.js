@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary')
 const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 
-const { appKeyCheck, playerLookup, fetchPlayer, lookupPhone, getImage } = require('../middlewares');
+const { appKeyCheck, playerLookup, fetchPlayer, checkDuplicateNum, lookupPhone, getImage } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
@@ -44,6 +44,7 @@ function playersRouter (app) {
   */
   app.get('/api/players/:playerId', appKeyCheck, fetchPlayer, function(req, res) {
     co(async function () {
+      console.log("env", process.env.DATABASE_URL)
       let player = await Player.findOne({
         where: { id: req.params.playerId }
       })
@@ -104,9 +105,10 @@ function playersRouter (app) {
        "avatar": "fdcpcusi5f5ef2bwg52x"
    }
   */
-  app.post('/api/players', upload.single('avatar'), appKeyCheck, fetchPlayer, lookupPhone, async function(req, res) {
+  app.post('/api/players', upload.single('avatar'), appKeyCheck, fetchPlayer, checkDuplicateNum,lookupPhone, async function(req, res) {
     try {
-      if (req.player !== 'No player found') {
+      if (req.player !== 'No player found' || req.number !== 'No number found') {
+        console.log('player found')
         return res.json({ error: `Player already exists, cannot create this player.`})
       } else if (res.error) {
         return res.json(res.error)
@@ -116,6 +118,7 @@ function playersRouter (app) {
         avatarUpload = await cloudinary.uploader.upload(req.file.path)
         playerAvatar = avatarUpload.public_id
       }
+      console.log('now building player')
       const newPlayer = Player.build({
         id: uuid.v4(),
         displayName: req.body.displayName,
@@ -128,7 +131,6 @@ function playersRouter (app) {
       let json = newPlayer.toJson();
       return res.json(json)
     } catch (error) {
-      console.log(error)
       return res.json({ error: 'Error creating new player' })
     }
   })

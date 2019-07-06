@@ -128,6 +128,8 @@ function campaignsRouter (app) {
         return res.json({ error: 'No player found with given playerId, cannot create campaign.' })
       }
       let player = req.player
+      console.log(" +++++ new player before ADDPLAYER +++++", player);
+
       let stepTargets = [];
       const params = req.body.params;
       const len = parseInt(params.campaignLength);
@@ -146,14 +148,25 @@ function campaignsRouter (app) {
         inventory: { foodItems: [], medicineItems: [], weaponItems: [] },
         host: player.id,
         timezone: req.body.timezone,
+        completedEvents: [],
       })
       await newCampaign.addPlayer(player.id)
-      await player.update(player.initCampaign(len))
-      let playerInfo = player.toJson()
+      player = await player.update(player.initCampaign(len), {
+        returning: true,
+      })
+      .then(function (result) {
+        console.log(typeof result);
+        
+        return result.dataValues
+      });
+      console.log(typeof player);
+      console.log("+++++++++ PLAYER UPDATE +++++++++++", player)
       let json = await newCampaign.toJson()
-      res.io.in(player.id).emit('sendPlayerInfo', playerInfo)
+      
+      res.io.in(player.id).emit('sendPlayerInfo', player)
       return res.json(json)
-    }).catch(function (err) {
+    })
+    .catch(function (err) {
       console.log(err)
       res.json({ error: 'Error creating a game' })
     })
@@ -524,7 +537,7 @@ function campaignsRouter (app) {
         if (player.pushToken) {
           const message = {
             to: player.pushToken,
-            body: 'The host of your campaign as abandoned the game.',
+            body: 'The host of your campaign has abandoned the game.',
             sound: 'default',
             data: {
               type: 'campaignDeleted',
