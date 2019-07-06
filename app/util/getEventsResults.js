@@ -23,11 +23,22 @@ async function getEventVotes(eventId) {
     }
   })
   return votes
-
 }
+
+async function getPlayerVoteForEvent(eventId, playerId) {
+  const playerVote = await Vote.findOne({
+    where: {
+      eventId: eventId,
+      playerId: playerId
+    }
+  })
+  return playerVote.dataValues
+}
+
 
 
 module.exports = {
   getAllActiveEvents,
-  getEventVotes
+  getEventVotes,
+  getPlayerVoteForEvent,
 };
