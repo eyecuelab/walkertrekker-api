@@ -471,7 +471,7 @@ function campaignsRouter (app) {
      "msg": "SMS invite sent to phone number +15035558989"
    }
   */
-  app.post('/api/campaigns/invite/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone, checkPlayerInActiveCampaign, function(req, res) {
+  app.post('/api/campaigns/invite/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, lookupPhone,  function(req, res) {
     co(function*() {
       if (req.player == 'No player found') {
         return res.json({ error: 'No player found with specified playerId, cannot send invite.'})
@@ -484,7 +484,7 @@ function campaignsRouter (app) {
       if (contactAlreadyInvited) {
         return res.json({ error: 'That contact has already received an invitation from this player to join a campaign and cannot be invited again.'})
       }
-      const link = req.body.link ? req.body.link : `walkertrekker://invite?campaignId=${campaign.id}`
+      const link = req.body.link ? req.body.link : `walkertreker://invite?campaignId=${campaign.id}`
       campaign.sendInvite(req.player, req.phoneNumber, link)
       const newInvited = [...req.player.invited, req.phoneNumber]
       req.player.update({ invited: newInvited })
