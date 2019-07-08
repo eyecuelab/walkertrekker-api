@@ -29,8 +29,8 @@ randomEventResult = async () => {
       let playerName = player.displayName
       console.log(playerName)
       playerVotes = { ...playerVotes, [playerName]: playerVote.vote }
-      console.log("PLAYER VOTES OBJECT", playerVotes)
     }
+    console.log("PLAYER VOTES OBJECT", await playerVotes)
 
     let votesArr = votes.map(vote => vote.vote)
     console.log("simple votes array", votesArr)
