@@ -85,6 +85,15 @@ function fetchVote (req, res, done) {
   })
 }
 
+function fetchJournal (req, res, done) {
+  Journal.findOne({
+    where: { id: req.params.journalId }
+  }).then((journal) => {
+    req.journal = journal
+    done()
+  })
+}
+
 function lookupPhone (req, res, done) {
   client.lookups.phoneNumbers(req.body.phoneNumber).fetch()
   .then(phone => {
