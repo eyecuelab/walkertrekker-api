@@ -5,7 +5,6 @@ exports.up = function(pgm) {
       primaryKey: true,
       notNull: true,
     },
-    playerId: { type: 'string' },
     campaignId: {type: 'string'},
     entry: { type: 'text' },
     entryDay: { type: 'integer' },
@@ -20,7 +19,6 @@ exports.up = function(pgm) {
       default: pgm.func('current_timestamp')
     }
   })
-  
 };
 
 exports.down = function(pgm) {

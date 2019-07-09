@@ -21,9 +21,6 @@ function JournalModel (sequelize, DataTypes) {
     campaignId: {
       type: DataTypes.UUID,
     },
-    playerId: {
-      type: DataTypes.UUID,
-    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
@@ -35,8 +32,7 @@ function JournalModel (sequelize, DataTypes) {
   });
 
   Journal.associate = function(models) {
-    Journal.belongsTo(models.Player)
-    Journal.hasOne(models.Campaign)
+    Journal.belongsTo(models.Campaign)
   }
 
   Journal.prototype.toJson = function() {
@@ -45,7 +41,6 @@ function JournalModel (sequelize, DataTypes) {
       entry: this.entry,
       entryDate: this.entryDate,
       campaignId: this.campaignId,
-      playerId: this.playerId,
     }
     return json
   }

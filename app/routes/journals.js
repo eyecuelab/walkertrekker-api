@@ -29,24 +29,24 @@ function journalsRouter (app) {
     }
   )
 
-  app.post('/api/journals/:playerId', appKeyCheck, fetchPlayer, async function(req, res) {
+  
+
+  app.post('/api/journals/:camapignId', appKeyCheck, fetchCampaign, async function(req, res) {
     co(async function() {
-      if (req.player == 'No player found') {
-        return res.json({ error: 'No event found with given playerId, cannot create journal.' })
+      if (req.camapign == 'No camapign found') {
+        return res.json({ error: 'No event found with given camapignId, cannot create journal.' })
       }
       console.log('now building journal')
       const newjournal = await Journal.create({
         id: uuid.v4(),
         entry: req.body.entry,
         entryDate: req.body.entry,
-        playerId: req.params.playerId,
-        campaignId: req.body.campaignId,
+        campaignId: req.params.campaignId,
       })
       let json = newjournal.toJson();
       return res.json(json)
     }).then(function (result) {
       console.log("type of", typeof result);
-      
       return result.dataValues
     }).catch((error) => {
       return res.json({ error: "Error creating new journal" })

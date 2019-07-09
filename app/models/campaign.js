@@ -10,6 +10,7 @@ const client = Twilio(twilioAccountSid, twilioAuthToken)
 function CampaignModel (sequelize, DataTypes) {
   const Event = sequelize.import('../models/event')
   const Player = sequelize.import('../models/player')
+  const Journal = sequelize.import('../models/journal')
 
   const Campaign = sequelize.define('campaigns', {
     id: {
@@ -57,6 +58,7 @@ function CampaignModel (sequelize, DataTypes) {
 
     Campaign.hasMany(Player)
     Campaign.hasMany(Event)
+    Campaign.hasMany(Journal)
   
 
   Campaign.prototype.toJson = async function() {

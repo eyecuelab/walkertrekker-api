@@ -15,6 +15,7 @@ const Player = sequelize.import('../models/player')
 const Campaign = sequelize.import('../models/campaign')
 const Event = sequelize.import('../models/event')
 const Vote = sequelize.import('../models/vote')
+const Journal = sequelize.import('../models/journal')
 
 function appKeyCheck (req, res, done) {
   if (req.headers['appkey'] !== process.env.CLIENT_APP_KEY) {
@@ -138,6 +139,7 @@ module.exports = {
   checkDuplicateNum,
   fetchCampaign,
   fetchEvent,
+  fetchJournal,
   fetchVote,
   lookupPhone,
   checkPlayerInActiveCampaign,
