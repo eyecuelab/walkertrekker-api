@@ -39,7 +39,7 @@ function JournalModel (sequelize, DataTypes) {
     let json = {
       id: this.id,
       entry: this.entry,
-      entryDate: this.entryDate,
+      entryDay: this.entryDay,
       campaignId: this.campaignId,
     }
     return json
