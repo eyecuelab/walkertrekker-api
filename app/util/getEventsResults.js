@@ -26,7 +26,6 @@ async function getEventVotes(eventId) {
 }
 
 async function getPlayerVoteForEvent(eventId, playerId) {
-  console.log("event, player", eventId, playerId)
   const playerVote = await Vote.findOne({
     where: {
       eventId: eventId,
