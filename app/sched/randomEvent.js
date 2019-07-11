@@ -72,6 +72,7 @@ randomEvent = async() => {
         eventType: eventType,
         eventNumber: evtId,
         eventId: eventObject.id,
+        createdAt: eventObject.createdAt
       }
       console.log("=======================")
   

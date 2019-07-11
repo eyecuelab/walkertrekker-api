@@ -1,11 +1,17 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+const uuid = require('node-uuid')
+const Sequelize = require('sequelize')
+const sequelize = new Sequelize(process.env.DATABASE_URL)
+const Journal = sequelize.import('../models/journal')
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 const campaignIsLost = require('../util/campaignIsLost')
 const campaignIsWon = require('../util/campaignIsWon')
+
+
 
 async function endOfDayUpdate() {
 
@@ -37,7 +43,7 @@ async function endOfDayUpdate() {
 
     // get players in campaign, check to see if everyone hit their step target for the day
     let players = await campaign.getPlayers()
-    const playersHitTargets = checkPlayerTargets(players, campaign)
+    const [playersHitTargets, slowPlayers] = checkPlayerTargets(players, campaign)
 
     // assign damage
     if (!playersHitTargets) {
@@ -47,6 +53,10 @@ async function endOfDayUpdate() {
     // set next day's step targets
     [players, campaign] = setStepTargets(players, campaign, playersHitTargets)
 
+    
+    // update the journal with endofday entry
+    updateJournal(campaign, slowPlayers)
+    
     // roll over campaign.currentDay
     campaign = incrementCurrentDay(campaign)
 
@@ -139,14 +149,45 @@ async function endOfDayUpdate() {
 }
 
 function checkPlayerTargets(players, campaign) {
+  let slowPlayers = [];
   let day = campaign.currentDay
-  let out = true
+  let allHitTarget = true
   for (let player of players) {
     if (player.steps[day] < player.stepTargets[day]) {
-      out = false
+      allHitTarget = false
+      slowPlayers.push(player)
     }
   }
-  return out
+  return [allHitTarget, slowPlayers]
+}
+
+async function updateJournal(campaign, slowPlayers) {
+  let message = !slowPlayers ? 'Everyone made it to the safehouse unscathed' : buildJournalEntry(slowPlayers);
+  try {
+    console.log('now building journal')
+    const newJournal = await Journal.create({
+      id: uuid.v4(),
+      entryDay: campaign.currentDay+1,
+      entry: message,
+      campaignId: campaign.id,
+    })
+    let json = await newJournal.toJson();
+    console.log("THIS IS THE NEW jOURNAl", json)
+    return json
+  }
+   catch(error) {
+    console.log({ error: "Error creating new Journal" })
+  }
+}
+
+function buildJournalEntry(slowPlayers) {
+  let playerNames = []
+  slowPlayers.forEach((player) => {
+    console.log(player)
+    playerNames.push(player.displayName)
+  })
+  console.log(playerNames)
+  return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while they were trying to reach the safehouse`
 }
 
 function resolveDamage(players, campaign) {

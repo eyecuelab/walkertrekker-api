@@ -42,6 +42,7 @@ function EventModel (sequelize, DataTypes) {
       active: this.active,
       story: this.story,
       votes: [],
+      createdAt: this.createdAt,
     }
 
     let votes = await this.getVotes()
