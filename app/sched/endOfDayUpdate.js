@@ -187,7 +187,7 @@ function buildJournalEntry(slowPlayers) {
     playerNames.push(player.displayName)
   })
   console.log(playerNames)
-  return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while trying to reach the safehouse`
+  return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while they were trying to reach the safehouse`
 }
 
 function resolveDamage(players, campaign) {

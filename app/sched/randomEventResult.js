@@ -1,6 +1,8 @@
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
 }
+
+const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const { getAllActiveEvents, getEventVotes, getPlayerVoteForEvent } = require('../util/getEventsResults')
@@ -10,13 +12,14 @@ const { sendNotifications } = require('../util/notifications')
 const Event = sequelize.import('../models/event');
 const Player = sequelize.import('../models/player');
 const Vote = sequelize.import('../models/vote');
+const Journal = sequelize.import('../models/journal');
 
 
 randomEventResult = async () => {
   const events = await getAllActiveEvents();
   console.log("events", events.length)
   if (events.length) {
-   
+  
     const messages = [];
   
     for (let event of events) {
@@ -35,7 +38,6 @@ randomEventResult = async () => {
           playerVotes = { ...playerVotes, [playerName]: playerVote.vote }
         }
       }
-      console.log("PLAYER VOTES OBJECT", await playerVotes)
   
       let votesArr = votes.map(vote => vote.vote)
       console.log("simple votes array", votesArr)
@@ -56,7 +58,6 @@ randomEventResult = async () => {
   
       updateEvent = async () => {
         try {
-          console.log('now updating event')
           updatedEvent = await event.update({
             active: false,
           })
@@ -67,8 +68,28 @@ randomEventResult = async () => {
           console.log({ error: "Error updated Event" })
         }
       }
+
+      createNewJournal = async () => {
+
+        console.log("trying to create new journal", campaign)
+        console.log("trying to create new journal", campaign.currentDay+1)
+        console.log("trying to create new journal", campaign.id)
+        try {
+          const newJournal = await Journal.create({
+            id: uuid.v4(),
+            entryDay: campaign.currentDay+1,
+            campaignId: campaign.id,
+          })
+          let json = await newJournal.toJson();
+          console.log("THIS IS THE NEW JOURNAl", json)
+          return json
+        }
+         catch(error) {
+          console.log({ error: "Error creating new Journal" })
+        }
+      }
   
-      prepareMessages = () => {
+      prepareMessages = (journal) => {
         let event = {
           players: [],
           data: {},
@@ -78,6 +99,7 @@ randomEventResult = async () => {
           result: result,
           eventId: evtId,
           playerVotes: playerVotes,
+          journalId: journal.id,
         }
         console.log("=======================")
     
@@ -97,8 +119,10 @@ randomEventResult = async () => {
           }
         }
       }
+      let eventJournal = await createNewJournal()
+      console.log("EVENT JOURNAL, no message", eventJournal)
       await updateEvent()
-      await prepareMessages()
+      await prepareMessages(eventJournal)
     } 
     
     console.log('-------------')

@@ -52,6 +52,19 @@ function journalsRouter (app) {
       return res.json({ error: "Error creating new journal" })
     })
   })
+
+  app.patch('/api/journals/:journalId', appKeyCheck, fetchJournal, function(req, res) {
+    co(async function () {
+      let journal = req.journal
+      await journal.update(req.body.journalUpdate)
+      let json = await journal.toJson()
+      return res.json(json)
+    }).catch(function(err) {
+      console.log(err)
+      return res.json({ error: 'Error updating journal info' })
+    })
+  })
+
 }
 
 
