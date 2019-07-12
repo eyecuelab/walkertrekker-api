@@ -383,8 +383,8 @@ function campaignsRouter (app) {
             }
           }
           messages.push(message)
-          res.io.in(player.id).emit('sendPlayerInfo', json)
         }
+        res.io.in(player.id).emit('sendPlayerInfo', player)
       }
       console.log('messages', messages)
       await sendNotifications(messages)

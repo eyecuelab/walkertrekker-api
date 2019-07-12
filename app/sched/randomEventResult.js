@@ -72,10 +72,6 @@ randomEventResult = async () => {
       }
 
       createNewJournal = async () => {
-
-        console.log("trying to create new journal", campaign)
-        console.log("trying to create new journal", campaign.currentDay+1)
-        console.log("trying to create new journal", campaign.id)
         try {
           const newJournal = await Journal.create({
             id: uuid.v4(),
@@ -106,7 +102,6 @@ randomEventResult = async () => {
         console.log("=======================")
     
         for (let player of players) {
-          console.log("player in the result script", player)
           if (player.pushToken) {
             const message = {
               to: player.pushToken,
