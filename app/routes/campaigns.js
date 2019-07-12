@@ -383,6 +383,7 @@ function campaignsRouter (app) {
             }
           }
           messages.push(message)
+          res.io.in(player.id).emit('sendPlayerInfo', json)
         }
       }
       console.log('messages', messages)
