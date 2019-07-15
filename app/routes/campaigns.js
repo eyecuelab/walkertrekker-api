@@ -485,7 +485,7 @@ function campaignsRouter (app) {
       if (contactAlreadyInvited) {
         return res.json({ error: 'That contact has already received an invitation from this player to join a campaign and cannot be invited again.'})
       }
-      const link = req.body.link ? req.body.link : `exp://mu-p87.kimofthecode.walkertreker.exp.direct:80/--/join?campaignId=${campaign.id}`
+      const link = req.body.link ? req.body.link : `https://kimmcconnell.github.io/walkertreker-redirect/?path=join&campaignId=${campaign.id}`
       campaign.sendInvite(req.player, req.phoneNumber, link)
       const newInvited = [...req.player.invited, req.phoneNumber]
       req.player.update({ invited: newInvited })

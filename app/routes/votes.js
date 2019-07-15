@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchVote, fetchEvent, fetchCampaign } = require('../middlewares');
+const { appKeyCheck, fetchVote, fetchEvent, checkPlayerHasVoted } = require('../middlewares');
 const { sendNotifications } = require('../util/notifications');
 const Campaign = sequelize.import('../models/campaign');
 const Player = sequelize.import('../models/player');
@@ -29,10 +29,13 @@ function votesRouter (app) {
     }
   )
 
-  app.post('/api/votes/:eventId', appKeyCheck, fetchEvent, async function(req, res) {
+  app.post('/api/votes/:eventId', appKeyCheck, fetchEvent, checkPlayerHasVoted, async function(req, res) {
     co(async function() {
       if (req.event == 'No event found') {
         return res.json({ error: 'No event found with given eventId, cannot create vote.' })
+      }
+      if (req.vote == 'vote found') {
+        return res.json({ error: 'That player has already cast a vote' })
       }
       console.log(req.event)
       console.log('now building vote')
@@ -46,7 +49,6 @@ function votesRouter (app) {
       return res.json(json)
     }).then(function (result) {
       console.log("type of", typeof result);
-      
       return result.dataValues
     }).catch((error) => {
       return res.json({ error: "Error creating new Vote" })
