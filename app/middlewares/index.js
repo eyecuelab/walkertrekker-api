@@ -87,12 +87,18 @@ function fetchVote (req, res, done) {
 
 function checkPlayerHasVoted(req, res, done) {
   Vote.findOne({
-    where: { playerId: req.body.playerId }
-  }).then((vote) => {
-    if (vote == null) {
-      req.vote = 'vote found'
-      done()
+    where: { playerId: req.body.playerId,
+      $and: {eventId: req.params.eventId}
     }
+  }).then((vote) => {
+    if ( vote !== null ) {
+      console.log('found vote')
+      req.vote = 'vote found'
+    } else {
+      console.log('new vote')
+      req.vote = 'new vote'
+    }
+    done()
   })
 }
 
