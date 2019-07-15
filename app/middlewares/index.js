@@ -47,7 +47,6 @@ function checkDuplicateNum (req, res, done) {
       console.log('no number found')
       req.number = 'No number found'
     } else {
-      console.log('check dupe')
       req.number = number
     }
     done();
@@ -82,6 +81,23 @@ function fetchVote (req, res, done) {
     where: { id: req.params.voteId }
   }).then((vote) => {
     req.vote = vote
+    done()
+  })
+}
+
+function checkPlayerHasVoted(req, res, done) {
+  Vote.findOne({
+    where: { playerId: req.body.playerId,
+      $and: {eventId: req.params.eventId}
+    }
+  }).then((vote) => {
+    if ( vote !== null ) {
+      console.log('found vote')
+      req.vote = 'vote found'
+    } else {
+      console.log('new vote')
+      req.vote = 'new vote'
+    }
     done()
   })
 }
@@ -141,6 +157,7 @@ module.exports = {
   fetchEvent,
   fetchJournal,
   fetchVote,
+  checkPlayerHasVoted,
   lookupPhone,
   checkPlayerInActiveCampaign,
   getImage,

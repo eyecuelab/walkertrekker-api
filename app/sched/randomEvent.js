@@ -8,17 +8,18 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Event = sequelize.import('../models/event');
 
 
-const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
+const { getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 
 
 randomEvent = async() => {
-
-  const campaigns = process.env.NODE_ENV == 'production'
-    ? await getActiveCampaignsAtLocalTime(20)
-    : await getAllActiveCampaigns()
+  const campaigns = await getAllActiveCampaigns()
   const messages = [];
-  
+
+  if (campaigns.length === 0) {
+    process.exit(0)
+  }
+
   console.log('EVENT')
   console.log('==================')
 
@@ -115,8 +116,8 @@ randomEvent = async() => {
 
 
   console.log('-------------')
-  console.log(messages)
-  console.log("DATA IN THE FIRST MESSAGE", messages[0].data)
+  console.log(await messages)
+  console.log("DATA IN THE FIRST MESSAGE", await messages[0].data)
   console.log('-------------')
 
   await sendNotifications(messages)

@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchVote, fetchEvent, fetchCampaign } = require('../middlewares');
+const { appKeyCheck, fetchVote, fetchEvent, checkPlayerHasVoted } = require('../middlewares');
 const { sendNotifications } = require('../util/notifications');
 const Campaign = sequelize.import('../models/campaign');
 const Player = sequelize.import('../models/player');
@@ -29,12 +29,18 @@ function votesRouter (app) {
     }
   )
 
-  app.post('/api/votes/:eventId', appKeyCheck, fetchEvent, async function(req, res) {
+  app.post('/api/votes/:eventId', appKeyCheck, fetchEvent, checkPlayerHasVoted, async function(req, res) {
     co(async function() {
       if (req.event == 'No event found') {
+        console.log('noEvent')
         return res.json({ error: 'No event found with given eventId, cannot create vote.' })
       }
+      if (req.vote == 'vote found') {
+        console.log('doubleVote')
+        return res.json({ error: 'That player has already cast a vote' })
+      }
       console.log(req.event)
+      console.log(req.vote)
       console.log('now building vote')
       const newVote = await Vote.create({
         id: uuid.v4(),
@@ -45,8 +51,8 @@ function votesRouter (app) {
       let json = newVote.toJson();
       return res.json(json)
     }).then(function (result) {
+      console.log("result", result.req.body)
       console.log("type of", typeof result);
-      
       return result.dataValues
     }).catch((error) => {
       return res.json({ error: "Error creating new Vote" })

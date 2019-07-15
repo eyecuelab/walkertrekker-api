@@ -32,6 +32,8 @@ randomEventResult = async () => {
   
       for (let player of players) {
         let playerVote = await getPlayerVoteForEvent(event.id, player.id)
+        console.log("PLAYER VOTES", playerVote)
+        
         if (playerVote) {
           let playerName = player.displayName
           console.log(playerName)
@@ -47,7 +49,7 @@ randomEventResult = async () => {
         acc[curr] ? acc[curr]++ : acc[curr] = 1
         return acc
       }, {})
-      console.log(votesCount)
+      console.log("======== VOTE COUNT ============\n", votesCount)
   
       // if no votes were cast for A or for B, set that one to 0
       votesCount.A ? null : votesCount.A = 0
@@ -70,10 +72,6 @@ randomEventResult = async () => {
       }
 
       createNewJournal = async () => {
-
-        console.log("trying to create new journal", campaign)
-        console.log("trying to create new journal", campaign.currentDay+1)
-        console.log("trying to create new journal", campaign.id)
         try {
           const newJournal = await Journal.create({
             id: uuid.v4(),
@@ -104,7 +102,6 @@ randomEventResult = async () => {
         console.log("=======================")
     
         for (let player of players) {
-          console.log("player in the result script", player)
           if (player.pushToken) {
             const message = {
               to: player.pushToken,

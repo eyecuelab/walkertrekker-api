@@ -33,7 +33,7 @@ async function getPlayerVoteForEvent(eventId, playerId) {
     }
   })
   console.log("PLAYER VOTE", playerVote)
-  playerVote ? playerVote.dataValues : null;
+  return playerVote ? playerVote.dataValues : null;
 }
 
 
