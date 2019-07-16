@@ -25,14 +25,13 @@ randomEvent = async() => {
 
   for (let campaign of campaigns) {
 
-
     let eventChance;
-    console.log(campaign.randomEvents)
-    console.log(Math.random() >= 0.5)
-
     campaign.randomEvents.toString() === 'high' ? eventChance = Math.random() >= 0.5 : campaign.randomEvents.toString() === 'mid' ? eventChance = Math.random() >= 0.7 : eventChance = Math.random() >= 0.85;
-    
+
+    console.log(eventChance)
+
     if(eventChance) {
+
       // get players to send notifications to
       let players = await campaign.getPlayers();
       let eventType = null;
@@ -45,6 +44,23 @@ randomEvent = async() => {
 
       const events = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19]
       const completedEvents = campaign.completedEvents
+
+      // if all events have been done, reset the array before picking one to send
+      console.log("CURRENT NUMBER OF COMPLETED EVENTS" ,completedEvents.length)
+      if (completedEvents.length >= events.length) {
+        console.log("length before", completedEvents.length)
+        try {
+          await campaign.update({
+            completedEvents: []
+          })
+          let json = await campaign.toJson()
+          completedEvents = json.completedEvents
+        } catch (err) {
+          json = "error updating completed events array: " + err;
+        }
+        console.log("length after", completedEvents.length)
+      }
+
       console.log('completedEvents', campaign.completedEvents)
       const possibleEvents = events.filter(val => !completedEvents.includes(val))
       const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
@@ -123,13 +139,14 @@ randomEvent = async() => {
     }
   }
 
-
-  console.log('-------------')
-  console.log(await messages)
-  console.log("DATA IN THE FIRST MESSAGE", await messages[0].data)
-  console.log('-------------')
-
-  await sendNotifications(messages)
+  if (messages.length !== 0) {
+    console.log('-------------')
+    console.log(await messages)
+    console.log("DATA IN THE FIRST MESSAGE", await messages[0].data)
+    console.log('-------------')
+  
+    await sendNotifications(messages)
+  }
   
   process.exit(0)
 }
