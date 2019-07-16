@@ -32,11 +32,9 @@ randomEventResult = async () => {
   
       for (let player of players) {
         let playerVote = await getPlayerVoteForEvent(event.id, player.id)
-        console.log("PLAYER VOTES", playerVote)
         
         if (playerVote) {
           let playerName = player.displayName
-          console.log(playerName)
           playerVotes = { ...playerVotes, [playerName]: playerVote.vote }
         }
       }
@@ -79,7 +77,6 @@ randomEventResult = async () => {
             campaignId: campaign.id,
           })
           let json = await newJournal.toJson();
-          console.log("THIS IS THE NEW JOURNAl", json)
           return json
         }
          catch(error) {
