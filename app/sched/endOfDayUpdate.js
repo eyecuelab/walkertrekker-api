@@ -149,7 +149,7 @@ async function endOfDayUpdate() {
 }
 
 function checkPlayerTargets(players, campaign) {
-  let slowPlayers = [];
+  let slowPlayers = []
   let day = campaign.currentDay
   let allHitTarget = true
   for (let player of players) {
@@ -162,7 +162,7 @@ function checkPlayerTargets(players, campaign) {
 }
 
 async function updateJournal(campaign, slowPlayers) {
-  let message = !slowPlayers ? 'Everyone made it to the safehouse unscathed' : buildJournalEntry(slowPlayers);
+  let message = !slowPlayers.length ? 'Everyone made it to the safehouse unscathed' : buildJournalEntry(slowPlayers);
   try {
     console.log('now building journal')
     const newJournal = await Journal.create({
@@ -183,7 +183,6 @@ async function updateJournal(campaign, slowPlayers) {
 function buildJournalEntry(slowPlayers) {
   let playerNames = []
   slowPlayers.forEach((player) => {
-    console.log(player)
     playerNames.push(player.displayName)
   })
   console.log(playerNames)
