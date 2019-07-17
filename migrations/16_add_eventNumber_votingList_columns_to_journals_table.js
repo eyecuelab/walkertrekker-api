@@ -1,6 +1,6 @@
 exports.up = function(pgm) {
   pgm.addColumns('journals', {
-    eventId: {type: 'string'},
+    eventNumber: {type: 'integer'},
     votingList: {type: 'text ARRAY'}
   })
 };
