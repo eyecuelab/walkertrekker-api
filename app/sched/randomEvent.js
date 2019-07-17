@@ -58,7 +58,7 @@ randomEvent = async() => {
         } catch (err) {
           json = "error updating completed events array: " + err;
         }
-        console.log("length after", completedEvents.length)
+        console.log("length after", await completedEvents.length)
       }
 
       console.log('completedEvents', campaign.completedEvents)
@@ -66,7 +66,7 @@ randomEvent = async() => {
       const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
       console.log("EVENT TO INSUE", evtId)
 
-
+      
       createNewEvent = async () => {
         try {
           console.log('now building event')

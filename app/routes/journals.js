@@ -43,6 +43,7 @@ function journalsRouter (app) {
         eventId: req.body.eventId,
         entryDay: req.body.entryDay,
         campaignId: req.campaign.id,
+        votingList: req.body.votingList,
       })
       let json = newJournal.toJson();
       return res.json(json)
