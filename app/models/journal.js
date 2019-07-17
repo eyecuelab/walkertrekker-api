@@ -18,6 +18,9 @@ function JournalModel (sequelize, DataTypes) {
     entryDay: {
       type: DataTypes.INTEGER,
     },
+    eventId: {
+      type: DataTypes.UUID,
+    },
     campaignId: {
       type: DataTypes.UUID,
     },
@@ -39,6 +42,7 @@ function JournalModel (sequelize, DataTypes) {
     let json = {
       id: this.id,
       entry: this.entry,
+      eventId: this.eventId,
       entryDay: this.entryDay,
       campaignId: this.campaignId,
     }

@@ -40,6 +40,7 @@ function journalsRouter (app) {
       const newJournal = await Journal.create({
         id: uuid.v4(),
         entry: req.body.entry,
+        eventId: req.body.eventId,
         entryDay: req.body.entryDay,
         campaignId: req.campaign.id,
       })
