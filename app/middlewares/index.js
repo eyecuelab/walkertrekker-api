@@ -93,10 +93,8 @@ function checkPlayerHasVoted(req, res, done) {
     }
   }).then((vote) => {
     if ( vote !== null ) {
-      console.log('found vote')
       req.vote = 'vote found'
     } else {
-      console.log('new vote')
       req.vote = 'new vote'
     }
     done()
@@ -116,7 +114,11 @@ function fetchInventory (req, res, done) {
   Inventory.findOne({
     where: { id: req.params.inventoryId }
   }).then((inventory) => {
-    req.inventory = inventory
+    if (inventory == null) {
+      req.inventory = 'No inventory found'
+    } else {
+      req.inventory = inventory
+    }
     done()
   })
 }

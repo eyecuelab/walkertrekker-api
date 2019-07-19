@@ -11,7 +11,7 @@ function inventoriesRouter(app) {
 
   app.get('/api/inventories/:inventoryId', appKeyCheck, fetchInventory, function(req, res) {
     co(function * () {
-        if (req.inventory == null) {
+        if (req.inventory == 'No inventory found') {
           return res.json({ error: 'No inventory found with specified inventoryId'})
         }
         let json = yield req.inventory.toJson();
@@ -41,15 +41,23 @@ function inventoriesRouter(app) {
       let json = newInventory.toJson();
       return res.json(json)
     }).then(function (result) {
-      console.log("result", result.req.body)
-      console.log("type of", typeof result);
       return result.dataValues
     }).catch((error) => {
       return res.json({ error: "Error creating new Inventory:", error })
     })
   })
 
-  // app.patch()
+  app.patch('/api/inventories/:inventoryId', appKeyCheck, fetchInventory, function(req, res) {
+    co(async function() {
+      if (req.inventory == 'No inventory found') {
+        return res.json({ error: 'No inventory found with specified inventoryId'})
+      }
+      let inventory = req.inventory
+      await inventory.update(req.body.inventoryUpdate)
+      let json = await inventory.toJson()
+      return res.json(json)
+    })
+  })
 
 
 }
