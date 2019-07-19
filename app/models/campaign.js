@@ -11,6 +11,7 @@ function CampaignModel (sequelize, DataTypes) {
   const Event = sequelize.import('../models/event')
   const Player = sequelize.import('../models/player')
   const Journal = sequelize.import('../models/journal')
+  const Inventory = sequelize.import('../models/inventory')
 
   const Campaign = sequelize.define('campaigns', {
     id: {
@@ -59,6 +60,7 @@ function CampaignModel (sequelize, DataTypes) {
     Campaign.hasMany(Player)
     Campaign.hasMany(Event)
     Campaign.hasMany(Journal)
+    Campaign.hasMany(Inventory)
   
 
   Campaign.prototype.toJson = async function() {

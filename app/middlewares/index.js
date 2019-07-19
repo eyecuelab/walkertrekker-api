@@ -16,6 +16,7 @@ const Campaign = sequelize.import('../models/campaign')
 const Event = sequelize.import('../models/event')
 const Vote = sequelize.import('../models/vote')
 const Journal = sequelize.import('../models/journal')
+const Inventory = sequelize.import('../models/inventory')
 
 function appKeyCheck (req, res, done) {
   if (req.headers['appkey'] !== process.env.CLIENT_APP_KEY) {
@@ -111,6 +112,15 @@ function fetchJournal (req, res, done) {
   })
 }
 
+function fetchInventory (req, res, done) {
+  Inventory.findOne({
+    where: { id: req.params.inventoryId }
+  }).then((inventory) => {
+    req.inventory = inventory
+    done()
+  })
+}
+
 function lookupPhone (req, res, done) {
   client.lookups.phoneNumbers(req.body.phoneNumber).fetch()
   .then(phone => {
@@ -160,6 +170,7 @@ module.exports = {
   checkPlayerHasVoted,
   lookupPhone,
   checkPlayerInActiveCampaign,
+  fetchInventory,
   getImage,
 }
 

@@ -45,6 +45,7 @@ function journalsRouter (app) {
         campaignId: req.campaign.id,
         votingList: req.body.votingList,
       })
+      newJournal.save()
       let json = newJournal.toJson();
       return res.json(json)
     }).then(function (result) {

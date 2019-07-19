@@ -26,7 +26,8 @@ randomEvent = async() => {
   for (let campaign of campaigns) {
 
     let eventChance;
-    campaign.randomEvents.toString() === 'high' ? eventChance = Math.random() >= 0.5 : campaign.randomEvents.toString() === 'mid' ? eventChance = Math.random() >= 0.7 : eventChance = Math.random() >= 0.85;
+    campaign.randomEvents.toString() === 'high' ? eventChance = Math.random() >= 0.5 : campaign.randomEvents.toString() === 'mid' ? eventChance = Math.random() >= 0.7 : 
+    eventChance = Math.random() >= 0.85;
 
     console.log(eventChance)
 

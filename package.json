@@ -12,6 +12,7 @@
     "start": "node server.js",
     "start-dev": "nodemon server.js",
     "migrate": "./node_modules/.bin/pg-migrate",
+    "migrate_up": "./node_modules/.bin/pg-migrate up",
     "migrate_down": "./node_modules/.bin/pg-migrate down",
     "standard": "./node_modules/.bin/standard",
     "apidoc": "./node_modules/apidoc/bin/apidoc -i app/routes -o public/doc/",
