@@ -59,7 +59,6 @@ function inventoriesRouter(app) {
     })
   })
 
-
 }
 
 module.exports = inventoriesRouter

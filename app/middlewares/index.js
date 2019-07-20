@@ -123,6 +123,7 @@ function fetchInventory (req, res, done) {
   })
 }
 
+
 function lookupPhone (req, res, done) {
   client.lookups.phoneNumbers(req.body.phoneNumber).fetch()
   .then(phone => {

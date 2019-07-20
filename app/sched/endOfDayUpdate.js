@@ -5,11 +5,14 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Journal = sequelize.import('../models/journal')
+const Inventory = sequelize.import('../models/inventory')
+
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 const campaignIsLost = require('../util/campaignIsLost')
 const campaignIsWon = require('../util/campaignIsWon')
+
 
 
 
@@ -53,7 +56,6 @@ async function endOfDayUpdate() {
     // set next day's step targets
     [players, campaign] = setStepTargets(players, campaign, playersHitTargets)
 
-    
     // update the journal with endofday entry
     updateJournal(campaign, slowPlayers)
     
@@ -189,7 +191,18 @@ function buildJournalEntry(slowPlayers) {
   return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while they were trying to reach the safehouse`
 }
 
+function fetchCurrentInventory (campaignId) {
+  return Inventory.findOne({
+    where: { 
+      campaignId: campaignId,
+      used: false,
+      itemType: 'weapon'
+     }
+  })
+}
+
 function resolveDamage(players, campaign) {
+  console.log("START OF RESOLVE DAMAGE")
   const day = campaign.currentDay
   // determine damage based on difficulty
   const diff = campaign.difficultyLevel
@@ -199,21 +212,31 @@ function resolveDamage(players, campaign) {
     xtreme: [20, 40]
   }
 
-  // deal randomized damage to players
+  let weapon = null;
+
+  fetchCurrentInventory(campaign.id).then((inventory) => {
+    weapon = inventory.dataValues
+    console.log("INVENTORY???", weapon)
+  })
+
+    // deal randomized damage to players
   for (let player of players) {
+
     let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
     if (player.steps[day] < player.stepTargets[day]) {
       // do 50% additional damage to players that failed to make their step target
       damage = Math.floor(damage * 1.5)
-    } else if (campaign.inventory.weaponItems.length > 0) {
+    } else if (weapon) {
+      console.log("THERE IS A WEAPON")
       // players that made their step target can use a weapon (if available) to reduce their damage by half
-      campaign.inventory.weaponItems.shift()
-      campaign.changed('inventory', true)
-      damage = Math.floor(damage / 2)
+    //   campaign.inventory.weaponItems.shift()
+    //   campaign.changed('inventory', true)
+    //   damage = Math.floor(damage / 2)
+    // }
+    // player.health = player.health - damage
     }
-    player.health = player.health - damage
+    return [players, campaign]
   }
-  return [players, campaign]
 }
 
 function setStepTargets(players, campaign, playersHitTargets) {

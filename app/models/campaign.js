@@ -79,7 +79,8 @@ function CampaignModel (sequelize, DataTypes) {
       timezone: this.timezone,
       completedEvents: this.completedEvents,
       players: [],
-      journals: []
+      journals: [],
+      inventories: []
     }
 
     let players = await this.getPlayers()
@@ -87,6 +88,14 @@ function CampaignModel (sequelize, DataTypes) {
       for (let player of players) {
         let playerData = player.toJson()
         json.players.push(playerData);
+      }
+    }
+
+    let inventories = await this.getInventories()
+    if (inventories) {
+      for (let inventory of inventories) {
+        let inventoryData = inventory.toJson()
+        json.inventories.push(inventoryData);
       }
     }
 
