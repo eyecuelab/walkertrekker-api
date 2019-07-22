@@ -77,6 +77,22 @@ function fetchEvent (req, res, done) {
   })
 }
 
+function fetchEventsOfCampaign (req, res, done) {
+  Event.findAll({
+    where: { 
+      campaignId: req.params.campaignId
+    }
+  }).then(function(events) {
+    console.log(events)
+    if (events == null) {
+      req.events = 'No events found'
+    } else {
+      req.events = events
+    }
+    done()
+  })
+}
+
 function fetchVote (req, res, done) {
   Vote.findOne({
     where: { id: req.params.voteId }
@@ -168,6 +184,7 @@ module.exports = {
   checkDuplicateNum,
   fetchCampaign,
   fetchEvent,
+  fetchEventsOfCampaign,
   fetchJournal,
   fetchVote,
   checkPlayerHasVoted,
