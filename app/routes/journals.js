@@ -40,9 +40,12 @@ function journalsRouter (app) {
       const newJournal = await Journal.create({
         id: uuid.v4(),
         entry: req.body.entry,
+        eventNumber: req.body.eventNumber,
         entryDay: req.body.entryDay,
         campaignId: req.campaign.id,
+        votingList: req.body.votingList,
       })
+      newJournal.save()
       let json = newJournal.toJson();
       return res.json(json)
     }).then(function (result) {

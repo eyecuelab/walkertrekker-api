@@ -26,7 +26,8 @@ randomEvent = async() => {
   for (let campaign of campaigns) {
 
     let eventChance;
-    campaign.randomEvents.toString() === 'high' ? eventChance = Math.random() >= 0.5 : campaign.randomEvents.toString() === 'mid' ? eventChance = Math.random() >= 0.7 : eventChance = Math.random() >= 0.85;
+    campaign.randomEvents.toString() === 'high' ? eventChance = Math.random() >= 0.5 : campaign.randomEvents.toString() === 'mid' ? eventChance = Math.random() >= 0.7 : 
+    eventChance = Math.random() >= 0.85;
 
     console.log(eventChance)
 
@@ -58,7 +59,7 @@ randomEvent = async() => {
         } catch (err) {
           json = "error updating completed events array: " + err;
         }
-        console.log("length after", completedEvents.length)
+        console.log("length after", await completedEvents.length)
       }
 
       console.log('completedEvents', campaign.completedEvents)
@@ -66,7 +67,7 @@ randomEvent = async() => {
       const evtId = possibleEvents[Math.floor(Math.random() * possibleEvents.length)];
       console.log("EVENT TO INSUE", evtId)
 
-
+      
       createNewEvent = async () => {
         try {
           console.log('now building event')

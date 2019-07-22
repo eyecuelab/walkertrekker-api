@@ -38,6 +38,7 @@ function eventsRouter (app) {
         active: req.body.active,
         campaignId: req.params.campaignId,
       })
+      newEvent.save()
       let json = newEvent.toJson();
       return res.json(json)
     }).then(function (result) {

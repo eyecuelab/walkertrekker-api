@@ -48,6 +48,7 @@ function votesRouter (app) {
         playerId: req.body.playerId,
         eventId: req.params.eventId,
       })
+      newVote.save()
       let json = newVote.toJson();
       return res.json(json)
     }).then(function (result) {

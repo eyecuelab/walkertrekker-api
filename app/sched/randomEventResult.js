@@ -74,6 +74,7 @@ randomEventResult = async () => {
           const newJournal = await Journal.create({
             id: uuid.v4(),
             entryDay: campaign.currentDay+1,
+            eventNumber: event.eventNumber,
             campaignId: campaign.id,
           })
           let json = await newJournal.toJson();

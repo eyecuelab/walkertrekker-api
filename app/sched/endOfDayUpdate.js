@@ -5,11 +5,14 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Journal = sequelize.import('../models/journal')
+const Inventory = sequelize.import('../models/inventory')
+
 
 const { getActiveCampaignsAtLocalTime, getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 const campaignIsLost = require('../util/campaignIsLost')
 const campaignIsWon = require('../util/campaignIsWon')
+
 
 
 
@@ -36,7 +39,7 @@ async function endOfDayUpdate() {
     console.log('')
     console.log(`Campaign ID: ${campaign.id}`)
     console.log(`Campaign state before update: `)
-    console.log(prevState)
+    // console.log(prevState)
     console.log('')
     console.log('====================')
     console.log('')
@@ -53,7 +56,6 @@ async function endOfDayUpdate() {
     // set next day's step targets
     [players, campaign] = setStepTargets(players, campaign, playersHitTargets)
 
-    
     // update the journal with endofday entry
     updateJournal(campaign, slowPlayers)
     
@@ -73,7 +75,7 @@ async function endOfDayUpdate() {
     console.log('====================')
     console.log('')
     console.log('Campaign state after update: ')
-    console.log(updatedState)
+    // console.log(updatedState)
     console.log('')
     console.log('====================')
     console.log('')
@@ -189,7 +191,18 @@ function buildJournalEntry(slowPlayers) {
   return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while they were trying to reach the safehouse`
 }
 
+function fetchWeapon (campaignId) {
+  return Inventory.findOne({
+    where: { 
+      campaignId: campaignId,
+      used: false,
+      itemType: 'weapon'
+     }
+  })
+}
+
 function resolveDamage(players, campaign) {
+  console.log("START OF RESOLVE DAMAGE")
   const day = campaign.currentDay
   // determine damage based on difficulty
   const diff = campaign.difficultyLevel
@@ -199,20 +212,32 @@ function resolveDamage(players, campaign) {
     xtreme: [20, 40]
   }
 
-  // deal randomized damage to players
+  fetchWeapon(campaign.id).then((inventory) => { 
+    inventory ? inventory : console.log("no inventory found")
+  
+
+    // deal randomized damage to players
   for (let player of players) {
+    console.log("PLAYER OF PLAYERS : ", player)
     let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
+
     if (player.steps[day] < player.stepTargets[day]) {
+      console.log('this player got hit')
       // do 50% additional damage to players that failed to make their step target
       damage = Math.floor(damage * 1.5)
-    } else if (campaign.inventory.weaponItems.length > 0) {
+    } else if (player.steps[day] >= player.stepTargets[day] && inventory) {
+      console.log("inventory")
       // players that made their step target can use a weapon (if available) to reduce their damage by half
-      campaign.inventory.weaponItems.shift()
-      campaign.changed('inventory', true)
+      inventory.update({
+        usedBy: 'player',
+        usedById: player.id,
+        used: true,
+      })
       damage = Math.floor(damage / 2)
     }
     player.health = player.health - damage
   }
+})
   return [players, campaign]
 }
 
