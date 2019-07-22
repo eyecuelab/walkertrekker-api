@@ -39,7 +39,7 @@ async function endOfDayUpdate() {
     console.log('')
     console.log(`Campaign ID: ${campaign.id}`)
     console.log(`Campaign state before update: `)
-    console.log(prevState)
+    // console.log(prevState)
     console.log('')
     console.log('====================')
     console.log('')
@@ -75,7 +75,7 @@ async function endOfDayUpdate() {
     console.log('====================')
     console.log('')
     console.log('Campaign state after update: ')
-    console.log(updatedState)
+    // console.log(updatedState)
     console.log('')
     console.log('====================')
     console.log('')
@@ -191,7 +191,7 @@ function buildJournalEntry(slowPlayers) {
   return `The zombies caught ${playerNames[0]}${playerNames[1] ? ' and ' + playerNames[1] : ''} while they were trying to reach the safehouse`
 }
 
-function fetchCurrentInventory (campaignId) {
+function fetchWeapon (campaignId) {
   return Inventory.findOne({
     where: { 
       campaignId: campaignId,
@@ -212,31 +212,29 @@ function resolveDamage(players, campaign) {
     xtreme: [20, 40]
   }
 
-  let weapon = null;
-
-  fetchCurrentInventory(campaign.id).then((inventory) => {
-    weapon = inventory.dataValues
-    console.log("INVENTORY???", weapon)
-  })
+  fetchWeapon(campaign.id).then((inventory) => { 
+    inventory ? inventory : console.log("no inventory found")
+  
 
     // deal randomized damage to players
   for (let player of players) {
-
+    console.log("PLAYER OF PLAYERS : ", player)
     let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
+
     if (player.steps[day] < player.stepTargets[day]) {
+      console.log('this player got hit')
       // do 50% additional damage to players that failed to make their step target
       damage = Math.floor(damage * 1.5)
-    } else if (weapon) {
-      console.log("THERE IS A WEAPON")
+    } else if (player.steps[day] >= player.stepTargets[day] && inventory) {
+      console.log("inventory")
       // players that made their step target can use a weapon (if available) to reduce their damage by half
-    //   campaign.inventory.weaponItems.shift()
-    //   campaign.changed('inventory', true)
-    //   damage = Math.floor(damage / 2)
-    // }
-    // player.health = player.health - damage
+      inventory.destroy()
+      damage = Math.floor(damage / 2)
     }
-    return [players, campaign]
+    player.health = player.health - damage
   }
+})
+  return [players, campaign]
 }
 
 function setStepTargets(players, campaign, playersHitTargets) {
