@@ -228,7 +228,11 @@ function resolveDamage(players, campaign) {
     } else if (player.steps[day] >= player.stepTargets[day] && inventory) {
       console.log("inventory")
       // players that made their step target can use a weapon (if available) to reduce their damage by half
-      inventory.destroy()
+      inventory.update({
+        usedBy: 'player',
+        usedById: player.id,
+        used: true,
+      })
       damage = Math.floor(damage / 2)
     }
     player.health = player.health - damage
