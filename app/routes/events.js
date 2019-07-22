@@ -3,7 +3,7 @@ const uuid = require('node-uuid')
 const Sequelize = require('sequelize')
 const sequelize = new Sequelize(process.env.DATABASE_URL)
 
-const { appKeyCheck, fetchEvent, fetchCampaign } = require('../middlewares');
+const { appKeyCheck, fetchEvent, fetchCampaign, fetchEventsOfCampaign } = require('../middlewares');
 const { sendNotifications } = require('../util/notifications');
 const Campaign = sequelize.import('../models/campaign');
 const Player = sequelize.import('../models/player');
@@ -12,6 +12,25 @@ const Event = sequelize.import('../models/event');
 
 
 function eventsRouter (app) {
+
+
+  app.get('/api/events/campaign/:campaignId', appKeyCheck, fetchEventsOfCampaign, fetchCampaign, async function(req, res) {
+    co(async function() {
+      if (req.campaign == null) {
+        return res.json({ error: 'No campaign found with specified campaignId'})
+      }
+      if (req.events == null) {
+        return res.json({ error: 'No events found with specified campaignId'})
+      }
+      console.log(req.events)
+      return res.json(req.events)
+    }).catch(function (err) {
+      console.log(err)
+      res.json({ error: 'Error fetching an event' })
+    })
+  })
+
+
 
   app.get('/api/events/:eventId', appKeyCheck, fetchEvent, function(req, res) {
     co(function * () {
@@ -22,14 +41,15 @@ function eventsRouter (app) {
         return res.json(json)
       }).catch(function (err) {
         console.log(err)
-      res.json({ error: 'Error fetching an event' })
+        res.json({ error: 'Error fetching an event' })
       })
     }
   )
 
-  app.post('/api/events/:campaignId', appKeyCheck,  async function(req, res) {
+  
+
+  app.post('/api/events/:campaignId', appKeyCheck, async function(req, res) {
     co(async function() {
-    
       console.log('now building event')
       const newEvent = await Event.create({
         id: uuid.v4(),
