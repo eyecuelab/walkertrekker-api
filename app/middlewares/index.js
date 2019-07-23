@@ -83,14 +83,12 @@ function fetchEventsOfCampaign (req, res, done) {
       campaignId: req.params.campaignId
     }
   }).then(function(events) {
-    console.log(events)
     if (events == null) {
       req.events = 'No events found'
     } else {
-      req.events = events
-    }
-    done()
-  })
+      req.events = events.map((event) => { return (event) => {event.toJson() }})
+  }})
+  done()
 }
 
 function fetchVote (req, res, done) {
