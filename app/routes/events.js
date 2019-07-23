@@ -14,22 +14,35 @@ const Event = sequelize.import('../models/event');
 function eventsRouter (app) {
 
 
-  app.get('/api/events/campaign/:campaignId', appKeyCheck, fetchEventsOfCampaign, fetchCampaign, async function(req, res) {
+  app.get('/api/events/campaign/:campaignId', appKeyCheck, fetchCampaign, async function(req, res) {
     co(async function() {
       if (req.campaign == null) {
         return res.json({ error: 'No campaign found with specified campaignId'})
       }
-      if (req.events == null) {
-        return res.json({ error: 'No events found with specified campaignId'})
-      }
-      console.log(req.events)
-      return res.json(req.events)
-    }).catch(function (err) {
+      try {
+        async function formatEvents(events) {
+          const pArray = await events.map((event) => { 
+            const repsonse = event.toJson()
+            return repsonse;
+          })
+          const eventsWith = await Promise.all(pArray)
+          return eventsWith
+        }
+        let events = await Event.findAll({
+          where: {
+            campaignId: req.params.campaignId
+          }
+        })
+        let result = await formatEvents(events)
+        let json = result
+        return res.json(json)
+      
+    } catch(err) {
       console.log(err)
       res.json({ error: 'Error fetching an event' })
-    })
+    }
   })
-
+})
 
 
   app.get('/api/events/:eventId', appKeyCheck, fetchEvent, function(req, res) {
