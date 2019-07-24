@@ -229,8 +229,8 @@ function resolveDamage(players, campaign) {
       console.log("inventory")
       // players that made their step target can use a weapon (if available) to reduce their damage by half
       inventory.update({
-        usedBy: 'player',
-        usedById: player.id,
+        user: 'player',
+        userId: player.id,
         used: true,
       })
       damage = Math.floor(damage / 2)

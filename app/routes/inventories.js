@@ -21,10 +21,10 @@ function inventoriesRouter(app) {
    * @apiSuccess {String} campaignId UUID of current game
    * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
    * @apiSuccess {Integer} itemNumber Number to display to front-end
-   * @apiSuccess {String} addedBy Either 'player' or 'event'
-   * @apiSuccess {String} addedById UUID of player, if player added this item
-   * @apiSuccess {String} usedBy Either 'player' or 'event'
-   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {String} source Either 'player' or 'event'
+   * @apiSuccess {String} sourceId UUID of player, if player added this item
+   * @apiSuccess {String} user Either 'player' or 'event'
+   * @apiSuccess {String} userId UUID of player, if player used this item
    * @apiSuccess {Boolean} used True if the item has been consumed
    *
    * @apiSuccessExample Success-Response:
@@ -34,10 +34,10 @@ function inventoriesRouter(app) {
    *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
    *    "itemType": "weapon",
    *    "itemNumber": 4,
-   *    "addedBy": "player",
-   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
-   *    "usedBy": "player",
-   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "source": "player",
+   *    "sourceId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "user": "player",
+   *    "userId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
    *    "used": true
    *  }
   */
@@ -67,10 +67,10 @@ function inventoriesRouter(app) {
    * @apiSuccess {String} campaignId UUID of current game
    * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
    * @apiSuccess {Integer} itemNumber Number to display to front-end
-   * @apiSuccess {String} addedBy Either 'player' or 'event'
-   * @apiSuccess {String} addedById UUID of player, if player added this item
-   * @apiSuccess {String} usedBy Either 'player' or 'event'
-   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {String} source Either 'player' or 'event'
+   * @apiSuccess {String} sourceId UUID of player, if player added this item
+   * @apiSuccess {String} user Either 'player' or 'event'
+   * @apiSuccess {String} userId UUID of player, if player used this item
    * @apiSuccess {Boolean} used True if the item has been consumed
    *
    * @apiSuccessExample Success-Response:
@@ -80,10 +80,10 @@ function inventoriesRouter(app) {
    *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
    *    "itemType": "weapon",
    *    "itemNumber": 4,
-   *    "addedBy": "player",
-   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
-   *    "usedBy": "player",
-   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "source": "player",
+   *    "sourceId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "user": "player",
+   *    "userId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
    *    "used": true
    *  }
   */
@@ -94,10 +94,10 @@ function inventoriesRouter(app) {
         id: uuid.v4(),
         itemType: req.body.itemType,
         itemNumber: req.body.itemNumber,
-        addedBy: req.body.addedBy,
-        addedById: req.body.addedById,
-        usedBy: req.body.usedBy,
-        usedById: req.body.usedById,
+        source: req.body.source,
+        sourceId: req.body.sourceId,
+        user: req.body.user,
+        userId: req.body.userId,
         used: req.body.used,
         campaignId: req.params.campaignId,
       })
@@ -112,8 +112,8 @@ function inventoriesRouter(app) {
   })
 
   /**
-   * @api {patch} /api/inventories/:inventoryId Fetch Inventory
-   * @apiName Fetch Inventory
+   * @api {patch} /api/inventories/:inventoryId Update Inventory
+   * @apiName Update Inventory
    * @apiGroup Inventories
    *
    * @apiExample {curl} Example usage:
@@ -123,10 +123,10 @@ function inventoriesRouter(app) {
    * @apiSuccess {String} campaignId UUID of current game
    * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
    * @apiSuccess {Integer} itemNumber Number to display to front-end
-   * @apiSuccess {String} addedBy Either 'player' or 'event'
-   * @apiSuccess {String} addedById UUID of player, if player added this item
-   * @apiSuccess {String} usedBy Either 'player' or 'event'
-   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {String} source Either 'player' or 'event'
+   * @apiSuccess {String} sourceId UUID of player, if player added this item
+   * @apiSuccess {String} user Either 'player' or 'event'
+   * @apiSuccess {String} userId UUID of player, if player used this item
    * @apiSuccess {Boolean} used True if the item has been consumed
    *
    * @apiSuccessExample Success-Response:
@@ -136,10 +136,10 @@ function inventoriesRouter(app) {
    *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
    *    "itemType": "weapon",
    *    "itemNumber": 4,
-   *    "addedBy": "player",
-   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
-   *    "usedBy": "player",
-   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "source": "player",
+   *    "sourceId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "user": "player",
+   *    "userId": "b1d77784-742b-4129-9952-d6b6c0f469c4",
    *    "used": true
    *  }
   */

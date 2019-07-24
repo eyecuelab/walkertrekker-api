@@ -23,18 +23,18 @@ function InventoryModel (sequelize, DataTypes) {
     itemNumber: { 
       type: DataTypes.INTEGER 
     },
-    addedBy: { 
+    source: { 
       type: DataTypes.ENUM,
       values: ['player', 'event'],
     },
-    addedById: { 
+    sourceId: { 
       type: DataTypes.UUID 
     },
-    usedBy: { 
+    user: { 
       type: DataTypes.ENUM,
       values: ['player', 'event'],
     },
-    usedById: { 
+    userId: { 
       type: DataTypes.UUID 
     },
     used: { 
@@ -60,10 +60,10 @@ function InventoryModel (sequelize, DataTypes) {
       campaignId: this.campaignId,
       itemType: this.itemType,
       itemNumber: this.itemNumber,
-      addedBy: this.addedBy,
-      addedById: this.addedById,
-      usedBy: this.usedBy,
-      usedById: this.usedById,
+      source: this.source,
+      sourceId: this.sourceId,
+      user: this.user,
+      userId: this.userId,
       used: this.used,
     }
     return json;
