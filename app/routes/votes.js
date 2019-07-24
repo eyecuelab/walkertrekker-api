@@ -14,6 +14,28 @@ const Vote = sequelize.import('../models/vote');
 
 function votesRouter (app) {
 
+  /**
+   * @api {get} /api/votes/:voteId Fetch Vote
+   * @apiName Fetch Vote
+   * @apiGroup Votes
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/votes/:voteId
+   *
+   * @apiSuccess {String} id Vote UUID
+   * @apiSuccess {String} vote Player's binary vote, either "A" or "B"
+   * @apiSuccess {String} eventId UUID of associated event
+   * @apiSuccess {String} playerId UUID of associated player
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *    "id": "feef135f-256a-48de-a9c5-5ae48be55329",
+   *    "vote": "A",
+   *    "eventId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *    "playerId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *  }
+  */
   app.get('/api/votes/:voteId', appKeyCheck, fetchVote, function(req, res) {
     console.log("in api/vote", req.vote)
     co(function * () {
@@ -29,6 +51,28 @@ function votesRouter (app) {
     }
   )
 
+  /**
+   * @api {post} /api/votes/:eventId Create Vote
+   * @apiName Create Vote
+   * @apiGroup Votes
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/votes/:eventId
+   *
+   * @apiSuccess {String} id Vote UUID
+   * @apiSuccess {String} vote Player's binary vote, either "A" or "B"
+   * @apiSuccess {String} eventId UUID of associated event
+   * @apiSuccess {String} playerId UUID of associated player
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *    "id": "feef135f-256a-48de-a9c5-5ae48be55329",
+   *    "vote": "A",
+   *    "eventId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *    "playerId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *  }
+  */
   app.post('/api/votes/:eventId', appKeyCheck, fetchEvent, checkPlayerHasVoted, async function(req, res) {
     co(async function() {
       if (req.event == 'No event found') {

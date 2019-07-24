@@ -186,8 +186,8 @@ function playersRouter (app) {
   })
 
   /**
-   * @api {post} /api/players/avatar Update Player
-   * @apiName Post an avatar
+   * @api {patch} /api/players/avatar Update Player
+   * @apiName Update Player
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:

@@ -44,7 +44,6 @@ function eventsRouter (app) {
    *    ]
    *  }
   */
-
   app.get('/api/events/:eventId', appKeyCheck, fetchEvent, function(req, res) {
     co(function * () {
         if (req.event == null) {
@@ -181,7 +180,7 @@ function eventsRouter (app) {
   })
 
   /**
-   * @api {post} /api/events/:eventId Update Event
+   * @api {patch} /api/events/:eventId Update Event
    * @apiName Update Event
    * @apiGroup Events
    *

@@ -9,6 +9,38 @@ const Inventory = sequelize.import('../models/inventory');
 
 function inventoriesRouter(app) {
 
+  /**
+   * @api {get} /api/inventories/:inventoryId Fetch Inventory
+   * @apiName Fetch Inventory
+   * @apiGroup Inventories
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
+   *
+   * @apiSuccess {String} id Inventory UUID
+   * @apiSuccess {String} campaignId UUID of current game
+   * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
+   * @apiSuccess {Integer} itemNumber Number to display to front-end
+   * @apiSuccess {String} addedBy Either 'player' or 'event'
+   * @apiSuccess {String} addedById UUID of player, if player added this item
+   * @apiSuccess {String} usedBy Either 'player' or 'event'
+   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {Boolean} used True if the item has been consumed
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *    "id": "feef135f-256a-48de-a9c5-5ae48be55329",
+   *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *    "itemType": "weapon",
+   *    "itemNumber": 4,
+   *    "addedBy": "player",
+   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "usedBy": "player",
+   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "used": true
+   *  }
+  */
   app.get('/api/inventories/:inventoryId', appKeyCheck, fetchInventory, function(req, res) {
     co(function * () {
         if (req.inventory == 'No inventory found') {
@@ -23,6 +55,38 @@ function inventoriesRouter(app) {
     }
   )
 
+  /**
+   * @api {post} /api/inventories/:campaignId Create Inventory
+   * @apiName Create Inventory
+   * @apiGroup Inventories
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:campaignId
+   *
+   * @apiSuccess {String} id Inventory UUID
+   * @apiSuccess {String} campaignId UUID of current game
+   * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
+   * @apiSuccess {Integer} itemNumber Number to display to front-end
+   * @apiSuccess {String} addedBy Either 'player' or 'event'
+   * @apiSuccess {String} addedById UUID of player, if player added this item
+   * @apiSuccess {String} usedBy Either 'player' or 'event'
+   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {Boolean} used True if the item has been consumed
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *    "id": "feef135f-256a-48de-a9c5-5ae48be55329",
+   *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *    "itemType": "weapon",
+   *    "itemNumber": 4,
+   *    "addedBy": "player",
+   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "usedBy": "player",
+   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "used": true
+   *  }
+  */
   app.post('/api/inventories/:campaignId', appKeyCheck, function(req, res){
     co(async function() {
       console.log('now building inventory')
@@ -47,6 +111,38 @@ function inventoriesRouter(app) {
     })
   })
 
+  /**
+   * @api {patch} /api/inventories/:inventoryId Fetch Inventory
+   * @apiName Fetch Inventory
+   * @apiGroup Inventories
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
+   *
+   * @apiSuccess {String} id Inventory UUID
+   * @apiSuccess {String} campaignId UUID of current game
+   * @apiSuccess {String} itemType Either 'weapon', 'med', or 'food'
+   * @apiSuccess {Integer} itemNumber Number to display to front-end
+   * @apiSuccess {String} addedBy Either 'player' or 'event'
+   * @apiSuccess {String} addedById UUID of player, if player added this item
+   * @apiSuccess {String} usedBy Either 'player' or 'event'
+   * @apiSuccess {String} usedById UUID of player, if player used this item
+   * @apiSuccess {Boolean} used True if the item has been consumed
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *    "id": "feef135f-256a-48de-a9c5-5ae48be55329",
+   *    "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+   *    "itemType": "weapon",
+   *    "itemNumber": 4,
+   *    "addedBy": "player",
+   *    "addedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "usedBy": "player",
+   *    "usedById": "b1d77784-742b-4129-9952-d6b6c0f469c4",
+   *    "used": true
+   *  }
+  */
   app.patch('/api/inventories/:inventoryId', appKeyCheck, fetchInventory, function(req, res) {
     co(async function() {
       if (req.inventory == 'No inventory found') {
