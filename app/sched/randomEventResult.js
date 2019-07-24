@@ -84,7 +84,7 @@ randomEventResult = async () => {
           console.log({ error: "Error creating new Journal" })
         }
       }
-  
+      
       prepareMessages = (journal) => {
         let event = {
           players: [],

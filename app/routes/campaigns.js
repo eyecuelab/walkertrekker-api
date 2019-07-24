@@ -27,11 +27,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -48,12 +48,23 @@ function campaignsRouter (app) {
            6000,
            0, ...
        ],
-       "inventory": {
-           "foodItems": [],
-           "weaponItems": [],
-           "medicineItems": []
-       },
-       "players": []
+       "completedEvents": [1,4],
+       "players": [],
+       "journals": [
+          {
+            "id": "0c342461-c2d1-4ca2-98cf-b176b136afb4",
+            "entry": "Everyone made it to the safehouse unscathed",
+            ...
+         },
+       ],
+       "inventories": [
+         {
+            "id": "fc5160fe-db30-456f-8fa2-16482491df26",
+            "campaignId": "9d5adb58-6939-4f0a-915f-0fcd1c6bfa75",
+            "itemType": "weapon",
+            ...
+         }
+       ]
    }
   */
   app.get('/api/campaigns/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
@@ -86,12 +97,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
    * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -105,22 +115,20 @@ function campaignsRouter (app) {
        "randomEvents": "low",
        "numPlayers": 0,
        "stepTargets": [
-           6000,
-           0, ...
-       ],
-       "inventory": {
-           "foodItems": [],
-           "weaponItems": [],
-           "medicineItems": []
-       },
-       "players": [
-          {
-            "id": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa",
-            ...
-          },
-       ],
-       "host": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa"
-   }
+         6000,
+         0, ...
+        ],
+        "host": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa"
+        "completedEvents": [1,4],
+        "players": [
+            {
+              "id": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa",
+              ...
+            },
+        ],
+        "journals": [],
+        "inventories": []
+    }
   */
   app.post('/api/campaigns/', appKeyCheck, fetchPlayer, function(req, res) {
     co(async function () {
@@ -189,11 +197,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -210,12 +218,10 @@ function campaignsRouter (app) {
            6000,
            0, ...
        ],
-       "inventory": {
-           "foodItems": [],
-           "weaponItems": [],
-           "medicineItems": []
-       },
-       "players": [...]
+       "completedEvents": [],
+       "players": [...],
+       "journals": [],
+       "inventories": []
    }
   */
   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
@@ -257,11 +263,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -278,12 +284,16 @@ function campaignsRouter (app) {
            6000,
            0, ...
        ],
-       "inventory": {
-           "foodItems": [],
-           "weaponItems": [],
-           "medicineItems": []
-       },
-       "players": [...]
+       "host": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa"
+       "completedEvents": [1,4],
+       "players": [
+          {
+            "id": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa",
+            ...
+          },
+       ],
+       "journals": [...],
+       "inventories": [...]
    }
   */
   app.patch('/api/campaigns/leave/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function(req, res) {
@@ -324,11 +334,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
    * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -340,17 +350,24 @@ function campaignsRouter (app) {
        "length": "30",
        "difficultyLevel": "hard",
        "randomEvents": "low",
-       "numPlayers": 0,
+       "numPlayers": 3,
        "stepTargets": [
            6000,
            0, ...
        ],
-       "inventory": {
-           "foodItems": [],
-           "weaponItems": [],
-           "medicineItems": []
-       },
-       "players": [...]
+       "host": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa"
+       "completedEvents": [],
+       "players": [
+          {
+            "id": "c1e1ee53-ae51-423c-b07d-9a98f74f1cfa",
+            ...
+          },
+          {
+            ...
+          },
+       ],
+       "journals": [],
+       "inventories": []
    }
   */
   app.patch('/api/campaigns/start/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
@@ -403,7 +420,7 @@ function campaignsRouter (app) {
    * @apiGroup Campaigns
    *
    * @apiExample {curl} Example usage:
-   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1, "inventory": { "foodItems": [1,5,0,8,4], "medicineItems": [], "weaponItems": [3] } } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "campaignUpdate": { "currentDay": 1 } }' https://walkertrekker.herokuapp.com/api/campaigns/58568813-712d-451b-9125-4103c6f1d7e5
    *
    * @apiSuccess {String} id Campaign UUID
    * @apiSuccess {Date} startDate First day of campaign (not necessarily createdAt date)
@@ -414,11 +431,11 @@ function campaignsRouter (app) {
    * @apiSuccess {String} randomEvents 'low', 'mid', 'high'
    * @apiSuccess {Integer} numPlayers
    * @apiSuccess {Integer[]} stepTargets array of steps each player needs to complete per day
-   * @apiSuccess {Object} inventory NOTE: if updating at least one inventory item, need to specify EACH in the body of your update.
-   * @apiSuccess {Integer[]} inventory.foodItems
-   * @apiSuccess {Integer[]} inventory.medicineItems
-   * @apiSuccess {Integer[]} inventory.weaponItems
-   * @apiSuccess {Player[]} players array of player instances associated with this game
+   * @apiSuccess {String} host PlayerId of the player that started the campaign
+   * @apiSuccess {Integer[]} completedEvents array of event numbers to track which events have been received recently
+   * @apiSuccess {Player[]} players array of player instances associated with this game (default to [] on creation)
+   * @apiSuccess {Event[]} events array of event instances associated with this game (default to [] on creation)
+   * @apiSuccess {Journal[]} journals array of journal instances associated with this game (default to [] on creation)
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
