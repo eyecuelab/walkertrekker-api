@@ -6,7 +6,7 @@ const cloudinary = require('cloudinary')
 const multer = require('multer')
 const upload = multer({ dest: 'uploads/' })
 
-const { appKeyCheck, playerLookup, fetchPlayer, checkDuplicateNum, lookupPhone, getImage } = require('../middlewares');
+const { appKeyCheck, fetchPlayer, checkDuplicateNum, lookupPhone, getImage } = require('../middlewares');
 const Player = sequelize.import('../models/player');
 const Campaign = sequelize.import('../models/campaign');
 
@@ -28,6 +28,9 @@ function playersRouter (app) {
    * @apiSuccess {Integer} health Current player health
    * @apiSuccess {Integer} hunger Current player hunger
    * @apiSuccess {Integer[]} steps Number of steps per campaign day
+   * @apiSuccess {Integer[]} stepTargets Step targets per campaign day
+   * @apiSuccess {String[]} invited phone numbers of invited players (host only)
+   * @apiSuccess {string} pushToken Exponent push token for player phones
    *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
@@ -39,7 +42,15 @@ function playersRouter (app) {
    *     "campaignId": null,
    *     "health": null,
    *     "hunger": null,
-   *      "steps": null
+   *     "steps": [
+   *        ...
+   *      ],
+   *     "stepTargets": [
+   *        ...
+   *      ],
+   *     "invited": [],
+   *     "avatar": null,
+   *     "pushToken": "ExponentPushToken[0ykQP7BUvSj5wvhyqb3pvk]"
    *    }
   */
   app.get('/api/players/:playerId', appKeyCheck, fetchPlayer, function(req, res) {
@@ -59,8 +70,47 @@ function playersRouter (app) {
     })
   })
 
-
-  // endpoint for account recovery
+  /**
+   * @api {get} /api/players/recover/:phoneNumber Send Recovery Text to Player
+   * @apiName Send Recovery Text to Player
+   * @apiGroup Players
+   *
+   * @apiExample {curl} Example usage:
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/players/recover/:phoneNumber
+   *
+   * @apiSuccess {String} id Player UUID
+   * @apiSuccess {String} displayName Player Name
+   * @apiSuccess {String} phoneNumber Phone Number
+   * @apiSuccess {Boolean} inActiveGame True if player is in a game
+   * @apiSuccess {String} campaignId UUID of current game (if inActiveGame is true, else null)
+   * @apiSuccess {Integer} health Current player health
+   * @apiSuccess {Integer} hunger Current player hunger
+   * @apiSuccess {Integer[]} steps Number of steps per campaign day
+   * @apiSuccess {Integer[]} stepTargets Step targets per campaign day
+   * @apiSuccess {String[]} invited phone numbers of invited players (host only)
+   * @apiSuccess {string} pushToken Exponent push token for player phones
+   *
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+   *  {
+   *     "id": "58568813-712d-451b-9125-4103c6f1d7e5",
+   *     "displayName": "Wilt Chamberlain",
+   *     "phoneNumber": "+15035551582",
+   *     "inActiveGame": false,
+   *     "campaignId": null,
+   *     "health": null,
+   *     "hunger": null,
+   *     "steps": [
+   *        ...
+   *      ],
+   *     "stepTargets": [
+   *        ...
+   *      ],
+   *     "invited": [],
+   *     "avatar": null,
+   *     "pushToken": "ExponentPushToken[somestringpushtoken]"
+   *    }
+  */
   app.get('/api/players/recover/:phoneNumber', appKeyCheck, function(req, res) {
     co(async function () {
       let player = await Player.findOne({
@@ -136,8 +186,8 @@ function playersRouter (app) {
   })
 
   /**
-   * @api {post} /api/players/avatar Update Player
-   * @apiName Post an avatar
+   * @api {patch} /api/players/avatar Update Player
+   * @apiName Update Player
    * @apiGroup Players
    *
    * @apiExample {curl} Example usage:
@@ -163,7 +213,15 @@ function playersRouter (app) {
    *     "campaignId": "58568813-712d-451b-9125-4103c6f1d7e5",
    *     "health": 100,
    *     "hunger": 88,
-   *      "steps": [1689, 0, 0, ...]
+   *      "steps": [
+   *        ...
+   *      ],
+   *     "stepTargets": [
+   *        ...
+   *      ],
+   *     "invited": [],
+   *     "avatar": null,
+   *     "pushToken": "ExponentPushToken[somestringpushtoken]"
    *    }
    * ]
   */
@@ -185,7 +243,7 @@ function playersRouter (app) {
     })
   })
 
-
+  // not currently in use
   app.post('/api/players/avatar', appKeyCheck, upload.single('avatar'), async function(req, res) {
     try {
       let player = await Player.findOne({ where: { id: req.body.playerId }})

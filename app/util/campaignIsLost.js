@@ -2,7 +2,7 @@ const { sendNotifications } = require('./notifications');
 
 const campaignIsLost = async (campaign) => {
   try {
-    const finalCampaignState = await campaign.toJson()
+    const finalCampaignState = await campaign.toSimpleJson()
     let players = finalCampaignState.players
     const starved = getStarvedPlayers(players)
     const beaten = getBeatenPlayers(players)
@@ -10,6 +10,7 @@ const campaignIsLost = async (campaign) => {
     let causeOfDeath = ''
     let body = ''
     if (starved.length > 0) {
+      console.log("DEAD PLAYERS", deadPlayers)
       causeOfDeath = 'starved'
       deadPlayers = starved
       body = `${deadPlayers[0].displayName} starved to death. Your Walker Trekker campaign is over. Tap to read the grisly details.`
@@ -52,18 +53,16 @@ const campaignIsLost = async (campaign) => {
         invited: []
       })
     }
-    await campaign.destroy()
   }
   catch (err) {
     console.log(err)
   }
-
 }
 
 function getStarvedPlayers(players) {
   const dead = []
   for (let player of players) {
-    if (player.hunger < 0) {
+    if (player.hunger <= 0) {
       dead.push(player)
     }
   }
@@ -73,7 +72,7 @@ function getStarvedPlayers(players) {
 function getBeatenPlayers(players) {
   const dead = []
   for (let player of players) {
-    if (player.health < 0) {
+    if (player.health <= 0) {
       dead.push(player)
     }
   }

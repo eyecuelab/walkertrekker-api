@@ -1,9 +1,8 @@
 const { sendNotifications } = require('./notifications');
 
-// STILL NEED TO TEST THIS TO SEE IF IT WORKS
-
 async function campaignIsWon(campaign) {
-  const finalCampaignState = await campaign.toJson()
+  const finalCampaignState = await campaign.toSimpleJson()
+  console.log("\nIN CAMPAING IS WON\n", finalCampaignState)
   const messages = []
   for (let player of finalCampaignState.players) {
     if (player.pushToken) {
@@ -31,8 +30,8 @@ async function campaignIsWon(campaign) {
       stepTargets: null,
       invited: []
     })
+    player.save()
   }
-  campaign.destroy()
 }
 
 module.exports = campaignIsWon
