@@ -7,7 +7,6 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 
 const Event = sequelize.import('../models/event');
 
-
 const { getAllActiveCampaigns, } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 

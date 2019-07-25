@@ -2,7 +2,7 @@ const { sendNotifications } = require('./notifications');
 
 const campaignIsLost = async (campaign) => {
   try {
-    const finalCampaignState = await campaign.toJson()
+    const finalCampaignState = await campaign.toSimpleJson()
     let players = finalCampaignState.players
     const starved = getStarvedPlayers(players)
     const beaten = getBeatenPlayers(players)

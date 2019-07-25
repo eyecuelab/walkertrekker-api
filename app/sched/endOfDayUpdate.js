@@ -96,6 +96,7 @@ async function endOfDayUpdate() {
         inventoryDiff: {},
       }
       const prevDay = prevState.currentDay
+      
       for (let player of prevState.players) {
         const prevPlayer = player
         const updatedPlayer = updatedState.players.filter(player => player.id === prevPlayer.id)[0]
@@ -217,27 +218,27 @@ function resolveDamage(players, campaign) {
   
 
     // deal randomized damage to players
-  for (let player of players) {
-    console.log("PLAYER OF PLAYERS : ", player)
-    let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
+    for (let player of players) {
+      console.log("PLAYER OF PLAYERS : ", player)
+      let damage = Math.floor( Math.random() * (DAMAGE_RANGES[diff][1] - DAMAGE_RANGES[diff][0] + 1) + DAMAGE_RANGES[diff][0] )
 
-    if (player.steps[day] < player.stepTargets[day]) {
-      console.log('this player got hit')
-      // do 50% additional damage to players that failed to make their step target
-      damage = Math.floor(damage * 1.5)
-    } else if (player.steps[day] >= player.stepTargets[day] && inventory) {
-      console.log("inventory")
-      // players that made their step target can use a weapon (if available) to reduce their damage by half
-      inventory.update({
-        user: 'player',
-        userId: player.id,
-        used: true,
-      })
-      damage = Math.floor(damage / 2)
+      if (player.steps[day] < player.stepTargets[day]) {
+        console.log('this player got hit')
+        // do 50% additional damage to players that failed to make their step target
+        damage = Math.floor(damage * 1.5)
+      } else if (player.steps[day] >= player.stepTargets[day] && inventory) {
+        console.log("inventory")
+        // players that made their step target can use a weapon (if available) to reduce their damage by half
+        inventory.update({
+          user: 'player',
+          userId: player.id,
+          used: true,
+        })
+        damage = Math.floor(damage / 2)
+      }
+      player.health = player.health - damage
     }
-    player.health = player.health - damage
-  }
-})
+  })
   return [players, campaign]
 }
 

@@ -9,9 +9,6 @@ const { getAllActiveEvents, getEventVotes, getPlayerVoteForEvent } = require('..
 const { getSpecificCampaign } = require('../util/getCampaigns')
 const { sendNotifications } = require('../util/notifications')
 
-const Event = sequelize.import('../models/event');
-const Player = sequelize.import('../models/player');
-const Vote = sequelize.import('../models/vote');
 const Journal = sequelize.import('../models/journal');
 
 
@@ -126,6 +123,10 @@ randomEventResult = async () => {
     console.log('-------------')
     
     await sendNotifications(messages)
+    process.exit(0)
+
+  } else {
+    // no events found
     process.exit(0)
   }
 }
