@@ -1,7 +1,5 @@
 const { sendNotifications } = require('./notifications');
 
-// STILL NEED TO TEST THIS TO SEE IF IT WORKS
-
 async function campaignIsWon(campaign) {
   const finalCampaignState = await campaign.toSimpleJson()
   console.log("\nIN CAMPAING IS WON\n", finalCampaignState)

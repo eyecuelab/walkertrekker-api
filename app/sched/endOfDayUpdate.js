@@ -32,8 +32,7 @@ async function endOfDayUpdate() {
 
     // duplicate campaign state, then log before update
     let prevState = await campaign.toJson()
-    const oldInventory = Object.assign({}, prevState.inventory)
-    const oldStepTargets = [...prevState.stepTargets]
+
     console.log('')
     console.log('====================')
     console.log('')
@@ -50,7 +49,7 @@ async function endOfDayUpdate() {
 
     // assign damage
     if (!playersHitTargets) {
-      [players, campaign] = resolveDamage(players, campaign)
+      [players, campaign] = await resolveDamage(players, campaign)
     }
 
     // set next day's step targets
@@ -64,6 +63,7 @@ async function endOfDayUpdate() {
 
     // save changes to database
     for (let player of players) {
+      console.log('====================', 'PLAYER SAVE', '====================')
       await player.save()
       let playerJson = player.toJson()
     }
@@ -202,8 +202,8 @@ function fetchWeapon (campaignId) {
   })
 }
 
-function resolveDamage(players, campaign) {
-  console.log("START OF RESOLVE DAMAGE")
+async function resolveDamage(players, campaign) {
+  console.log("START OF RESOLVE DAMAGE", players)
   const day = campaign.currentDay
   // determine damage based on difficulty
   const diff = campaign.difficultyLevel
@@ -213,10 +213,9 @@ function resolveDamage(players, campaign) {
     xtreme: [20, 40]
   }
 
-  fetchWeapon(campaign.id).then((inventory) => { 
+  await fetchWeapon(campaign.id).then((inventory) => { 
     inventory ? inventory : console.log("no inventory found")
   
-
     // deal randomized damage to players
     for (let player of players) {
       console.log("PLAYER OF PLAYERS : ", player)
@@ -239,6 +238,7 @@ function resolveDamage(players, campaign) {
       player.health = player.health - damage
     }
   })
+  console.log("before player return")
   return [players, campaign]
 }
 
