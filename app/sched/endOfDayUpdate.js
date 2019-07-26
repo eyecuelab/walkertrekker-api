@@ -49,7 +49,7 @@ async function endOfDayUpdate() {
 
     // assign damage
     if (!playersHitTargets) {
-      [players, campaign] = await resolveDamage(players, campaign)
+      [players, campaign, inventoryUsed] = await resolveDamage(players, campaign)
     }
 
     // set next day's step targets
@@ -93,7 +93,7 @@ async function endOfDayUpdate() {
       // Build update object to display on EndOfDaySummary screen in client
       let update = {
         players: [],
-        inventoryDiff: {},
+        inventoryUsed: inventoryUsed,
       }
       const prevDay = prevState.currentDay
       
@@ -108,11 +108,6 @@ async function endOfDayUpdate() {
         }
         update.players.push(playerInfo)
       }
-      Object.keys(prevState.inventory).forEach(item => {
-        update.inventoryDiff = Object.assign({}, update.inventoryDiff, {
-          [item]: prevState.inventory[item].length - updatedState.inventory[item].length
-        })
-      })
 
       // log the update being sent out to players
       console.log(`Update data sent out to players: `)
@@ -138,7 +133,6 @@ async function endOfDayUpdate() {
       }
 
     }
-
   }
 
   // send push notifications
@@ -203,6 +197,7 @@ function fetchWeapon (campaignId) {
 }
 
 async function resolveDamage(players, campaign) {
+  let inventoryUsed = [];
   console.log("START OF RESOLVE DAMAGE", players)
   const day = campaign.currentDay
   // determine damage based on difficulty
@@ -215,7 +210,6 @@ async function resolveDamage(players, campaign) {
 
   await fetchWeapon(campaign.id).then((inventory) => { 
     inventory ? inventory : console.log("no inventory found")
-  
     // deal randomized damage to players
     for (let player of players) {
       console.log("PLAYER OF PLAYERS : ", player)
@@ -233,13 +227,14 @@ async function resolveDamage(players, campaign) {
           userId: player.id,
           used: true,
         })
+        inventoryUsed.push(inventory)
         damage = Math.floor(damage / 2)
       }
       player.health = player.health - damage
     }
   })
   console.log("before player return")
-  return [players, campaign]
+  return [players, campaign, inventoryUsed]
 }
 
 function setStepTargets(players, campaign, playersHitTargets) {
