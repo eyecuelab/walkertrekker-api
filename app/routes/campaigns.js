@@ -226,9 +226,11 @@ function campaignsRouter (app) {
   */
   app.patch('/api/campaigns/join/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function (req, res) {
     co(async function() {
+      console.log("request object:", req)
       let campaign = req.campaign
       let player = req.player
-      console.log(player)
+      console.log("player joining campaign:", player)
+      console.log("campaign that player is joingin:", campaign)
       let len = parseInt(campaign.length)
       if (campaign.numPlayers == 5) {
         return res.json({ error: `Sorry, this campaign is full.`})
@@ -299,10 +301,11 @@ function campaignsRouter (app) {
   app.patch('/api/campaigns/leave/:campaignId', appKeyCheck, fetchCampaign, fetchPlayer, function(req, res) {
     co(async function() {
       let player = req.player
-      console.log(req.player)
+      console.log("req.player:" + req.player)
+      console.log("variable player:" + player)
       let campaign = req.campaign
-      console.log(req.campaign);
-      console.log(() => removePlayer());
+      console.log("req.campaign" + req.campaign);
+      console.log("the function removePlayer:", () => removePlayer());
       campaign.removePlayer(player)
       await player.update({
         health: null,
@@ -376,6 +379,7 @@ function campaignsRouter (app) {
   app.patch('/api/campaigns/start/:campaignId', appKeyCheck, fetchCampaign, function(req, res) {
     co(async function() {
       let campaign = req.campaign
+      console.log("start campaign:" + campaign)
       const len = parseInt(campaign.length)
       const startDate = new Date();
       const hourAdjust = startDate.getUTCHours() + campaign.timezone
