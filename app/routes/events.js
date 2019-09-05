@@ -16,7 +16,7 @@ function eventsRouter (app) {
    * @apiGroup Events
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/events/:eventId
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc"  http://walkertrekker.herokuapp.com/api/events/:eventId
    *
    * @apiSuccess {String} id Event UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -64,7 +64,7 @@ function eventsRouter (app) {
    * @apiGroup Events
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/events/campaign/:campaignId
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" http://walkertrekker.herokuapp.com/api/events/campaign/:campaignId
    *
    * @apiSuccess {Event[]} event Return all events in a campaign
    * @apiSuccess {String} event.id Event UUID
@@ -137,7 +137,7 @@ function eventsRouter (app) {
    * @apiGroup Events
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/events/:campaignId
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" http://walkertrekker.herokuapp.com/api/events/:campaignId
    *
    * @apiSuccess {String} id Event UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -185,7 +185,8 @@ function eventsRouter (app) {
    * @apiGroup Events
    *
    * @apiExample {curl} Example usage:
-   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/events/:eventId
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "eventUpdate": {"active": false} }' http://walkertrekker.herokuapp.com/api/events/:eventId
+   * 
    *
    * @apiSuccess {String} id Event UUID
    * @apiSuccess {String} campaignId UUID of current game
