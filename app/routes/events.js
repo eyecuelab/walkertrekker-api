@@ -137,7 +137,8 @@ function eventsRouter (app) {
    * @apiGroup Events
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" http://walkertrekker.herokuapp.com/api/events/:campaignId
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "eventNumber": 1, "active": true, "story": "random" }' http://walkertrekker.herokuapp.com/api/events/:campaignId
+   * 
    *
    * @apiSuccess {String} id Event UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -169,10 +170,13 @@ function eventsRouter (app) {
         active: req.body.active,
         campaignId: req.params.campaignId,
       })
-      newEvent.save()
-      let json = newEvent.toJson();
+      await newEvent.save()
+      let json = await newEvent.toJson();
+      console.log("res:", res)
       return res.json(json)
     }).then(function (result) {
+      //result is undefined for some reason!! 
+      console.log("result:", result.dataValues)
       return result.dataValues
     }).catch((error) => {
       return res.json({ error: "Error creating new Event" })
