@@ -15,7 +15,7 @@ function inventoriesRouter(app) {
    * @apiGroup Inventories
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
    *
    * @apiSuccess {String} id Inventory UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -61,7 +61,7 @@ function inventoriesRouter(app) {
    * @apiGroup Inventories
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:campaignId
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "itemType": "med", "itemNumber": 1, "source": "player", "sourceId": ":userID", "user": "player", "userId": ":userID", "used": false }' http://walkertrekker.herokuapp.com/api/inventories/:campaignId
    *
    * @apiSuccess {String} id Inventory UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -117,7 +117,7 @@ function inventoriesRouter(app) {
    * @apiGroup Inventories
    *
    * @apiExample {curl} Example usage:
-   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "inventoryUpdate": {"used": true} }' http://walkertrekker.herokuapp.com/api/inventories/:inventoryId
    *
    * @apiSuccess {String} id Inventory UUID
    * @apiSuccess {String} campaignId UUID of current game
