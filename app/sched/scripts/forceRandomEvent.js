@@ -6,7 +6,8 @@ const sequelize = new Sequelize(process.env.DATABASE_URL)
 const Campaign = sequelize.import('../../models/campaign')
 
 const forceRandomEvent = async function() {
-  const campaign = await Campaign.findOne({ where: { id: "3fd0b9d3-e9d1-4233-a064-48b76389870b" } })
+  const campaign = await Campaign.findOne({ where: { id: "23449e1f-26c2-41ef-9a08-588d3afe2fc0" } })
+  console.log(campaign);
   const players = await campaign.getPlayers()
   const campaignJson = await campaign.toJson()
   console.log('CAMPAIGN')
