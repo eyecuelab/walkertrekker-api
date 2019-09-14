@@ -307,12 +307,14 @@ function campaignsRouter (app) {
       console.log("req.campaign" + req.campaign);
       console.log("the function removePlayer:", () => removePlayer());
       campaign.removePlayer(player)
-      await player.update({
-        health: null,
-        hunger: null,
-        steps: null,
-        inActiveGame: false,
-      })
+      // instead of updating the player, leaveing campaign destroys the player
+      await player.destroy()
+      // await player.update({
+      //   health: null,
+      //   hunger: null,
+      //   steps: null,
+      //   inActiveGame: false,
+      // })
       let numPlayers = campaign.numPlayers - 1
       await campaign.update({
         numPlayers
