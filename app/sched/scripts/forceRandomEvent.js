@@ -18,7 +18,8 @@ const forceRandomEvent = async function() {
 
   const newEvent = await Event.create({
     id: uuid.v4(),
-    eventNumber: 1,
+    ///event number defined here so that it shows up in the db
+    eventNumber: 3,
     story: 'random',
     active: true,
     campaignId: campaignId,
@@ -30,7 +31,8 @@ const forceRandomEvent = async function() {
     data: {
       eventId: eventObject.id,
       id: eventObject.id,
-      eventNumber: 2,
+      //event number defined here so that front end does not break
+      eventNumber: 3,
       eventType: 'random',
       active: true,
       campaignId: campaignId,
