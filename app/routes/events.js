@@ -103,6 +103,7 @@ function eventsRouter (app) {
   
   */
   app.get('/api/events/campaign/:campaignId', appKeyCheck, fetchCampaign, async function(req, res) {
+    console.log("GET GET GET GET GET EVENTS EVENTS EVENTS EVENTS")
     co(async function() {
       if (req.campaign == null) {
         return res.json({ error: 'No campaign found with specified campaignId'})
@@ -123,6 +124,13 @@ function eventsRouter (app) {
         })
         let result = await formatEvents(events)
         let json = result
+        console.log('-----------')
+        console.log('-----------')
+        console.log('-----------')
+        console.log("get campaign events,", result)
+        console.log('-----------')
+        console.log('-----------')
+        console.log('-----------')
         return res.json(json)
       } catch(err) {
         console.log(err)
