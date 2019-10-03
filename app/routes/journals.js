@@ -17,7 +17,7 @@ function journalsRouter (app) {
    * @apiGroup Journals
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/journals/:journalId
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc"  http://walkertrekker.herokuapp.com/api/journals/:journalId
    *
    * @apiSuccess {String} id Journal UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -61,7 +61,7 @@ function journalsRouter (app) {
    * @apiGroup Journals
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/journals/:campaignId
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" d '{ "entry": "Today was a rough, tough and tumble day", "eventNumber": 1, "entryDay": 4, "votingList": ["yes", "no", "maybe"] }' http://walkertrekker.herokuapp.com/api/journals/:campaignId
    *
    * @apiSuccess {String} id Journal UUID
    * @apiSuccess {String} campaignId UUID of current game
@@ -112,8 +112,9 @@ function journalsRouter (app) {
    * @apiGroup Journals
    *
    * @apiExample {curl} Example usage:
-   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/journals/:journalId
+   *   curl -X PATCH -H "Content-type: application/json" -H "appkey: abc" -d '{ "journalUpdate": {"votingList": ["yes", "no", "maybe", "most definitely"]} }' http://walkertrekker.herokuapp.com/api/journals/:journalId
    *
+   * 
    * @apiSuccess {String} id Journal UUID
    * @apiSuccess {String} campaignId UUID of current game
    * @apiSuccess {String} entry Main text of the journal

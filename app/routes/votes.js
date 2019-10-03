@@ -20,7 +20,7 @@ function votesRouter (app) {
    * @apiGroup Votes
    *
    * @apiExample {curl} Example usage:
-   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/votes/:voteId
+   *   curl -X GET -H "Content-type: application/json" -H "appkey: abc" http://walkertrekker.herokuapp.com/api/votes/:voteId
    *
    * @apiSuccess {String} id Vote UUID
    * @apiSuccess {String} vote Player's binary vote, either "A" or "B"
@@ -57,7 +57,7 @@ function votesRouter (app) {
    * @apiGroup Votes
    *
    * @apiExample {curl} Example usage:
-   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -H  http://walkertrekker.herokuapp.com/api/votes/:eventId
+   *   curl -X POST -H "Content-type: application/json" -H "appkey: abc" -d '{ "vote": "A", "playerId": ":playerId" }'  http://walkertrekker.herokuapp.com/api/votes/:eventId
    *
    * @apiSuccess {String} id Vote UUID
    * @apiSuccess {String} vote Player's binary vote, either "A" or "B"
