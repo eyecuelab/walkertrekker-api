@@ -45,7 +45,7 @@
     "pg": "^6.1.2",
     "pg-hstore": "^2.3.2",
     "pg-native": "^1.10.0",
-    "sequelize": "^4.42.0",
+    "sequelize": "^5.15.1",
     "socket.io": "^1.7.3",
     "socket.io-client": "^1.7.4",
     "twilio": "^3.28.0"
